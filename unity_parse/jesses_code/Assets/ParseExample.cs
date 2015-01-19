@@ -97,8 +97,10 @@ public class ParseExample : MonoBehaviour {
 		//should have the final count now
 		total_items = task.Result;
 
+
 		int page_count = total_items / items_per_page;
-		for (int i = 0; i < page_count; i++) {
+		for (int i = 0; i < page_count; i++) 
+		{
 			PagingInfo page = new PagingInfo ();
 			page.PageIndex = i;
 			page.PageSize = items_per_page;
@@ -120,10 +122,19 @@ public class ParseExample : MonoBehaviour {
 		//if we get here we have data and are in main thread again - so we can make objects
 
 		if (task.IsFaulted) {
-			Debug.Log("FAULTED TASK : " + task.Exception);
-		}else if(task.IsCanceled){
+			foreach(var e in task.Exception.InnerExceptions)
+			{
+				ParseException parseException = (ParseException) e;
+				Debug.Log("Error message " + parseException.Message);
+				Debug.Log("Error Code:" + parseException.Code);
+			}
+//			Debug.Log("FAULTED TASK : " + task.Exception);
+		}
+		else if(task.IsCanceled){
 			Debug.Log("CANCELED TASK");
-		}else {
+		}
+		else 
+		{
 
 			Debug.Log("MAKING SPHERES");
 			IEnumerable<SingleLocation> results = task.Result;
@@ -139,7 +150,7 @@ public class ParseExample : MonoBehaviour {
 				sphere.transform.parent = this.transform;
 				sphere.transform.position = new Vector3(single_location.Lat,1.0F,single_location.Lon);
 				sphere.renderer.material.shader = Shader.Find( "Transparent/Diffuse" );
-				sphere.renderer.material.color = new Color(0,1.0f,1.0f,.25f);
+				sphere.renderer.material.color = new Color(0,1.0f,.5f,.25f);
 
 				//yield return new WaitForSeconds(0.05f);//helpful if doing tweens or animations on eachobject
 			}

@@ -56,7 +56,7 @@
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Parse.Unity">
- <HintPath>/Users/iking/Documents/UAF_2015/jesses_code/Assets/Parse/Parse.Unity.dll</HintPath>
+ <HintPath>/Users/iking/Documents/UAF_2015/uaf_2015_code/unity_parse/jesses_code/Assets/Parse/Parse.Unity.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
