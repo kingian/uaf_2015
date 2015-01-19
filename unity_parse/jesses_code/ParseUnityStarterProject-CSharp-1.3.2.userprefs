@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/ParseExample.cs">
+    <Files>
+      <File FileName="Assets/ParseExample.cs" Line="25" Column="84" />
+      <File FileName="Assets/SingleLocation.cs" Line="8" Column="30" />
+      <File FileName="Assets/PagingInfo.cs" Line="7" Column="47" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
