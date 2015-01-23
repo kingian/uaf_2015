@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 //needed for IEnumerable
 using System.Collections.Generic;
@@ -7,6 +7,8 @@ using Parse;
 
 
 public class ParseExample : MonoBehaviour {
+
+	Queue<SingleLocation> location_queue = new Queue<SingleLocation>();
 
 	// Use this for initialization
 	void Start () {
@@ -79,15 +81,12 @@ public class ParseExample : MonoBehaviour {
 
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
 
 	public IEnumerator getDataInPages(){
 
 		//parse maxes out at 1k
-		int items_per_page = 1000;
+		int items_per_page = 250;
 		int total_items = 0;//dunno how many yet
 
 		//counting objetcs example -- supposedly inaccurate for alrge datasets like our
@@ -118,7 +117,8 @@ public class ParseExample : MonoBehaviour {
 		Debug.Log("FETCHING DATA:" + page.SkipAmount);
 		var query = new ParseQuery<SingleLocation>().OrderBy("time").Limit(page.PageSize).Skip(page.SkipAmount);
 		var task = query.FindAsync();
-		while(!task.IsCompleted) yield return new WaitForSeconds(500.0f/page.PageSize);
+		while (!task.IsCompleted)
+						yield return null;//new WaitForSeconds(500.0f/page.PageSize);
 		//if we get here we have data and are in main thread again - so we can make objects
 
 		if (task.IsFaulted) {
@@ -146,11 +146,21 @@ public class ParseExample : MonoBehaviour {
 				//Debug.Log(single_location.RawCoordinates);
 				//Debug.Log("object:"+(count +page.SkipAmount));
 				//Debug.Log(single_location.DebugMessage);
+
 				GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 				sphere.transform.parent = this.transform;
 				sphere.transform.position = new Vector3(single_location.Lat,1.0F,single_location.Lon);
 				sphere.renderer.material.shader = Shader.Find( "Transparent/Diffuse" );
 				sphere.renderer.material.color = new Color(0,1.0f,.5f,.25f);
+
+//				GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+//				sphere.transform.parent = this.transform;
+//				sphere.transform.position = new Vector3(single_location.Lat,1.0F,single_location.Lon);
+//				sphere.renderer.material.shader = Shader.Find( "Transparent/Diffuse" );
+//				sphere.renderer.material.color = new Color(0,1.0f,1.0f,.25f);
+
+				location_queue.Enqueue(single_location);
+
 
 				//yield return new WaitForSeconds(0.05f);//helpful if doing tweens or animations on eachobject
 			}
@@ -158,6 +168,21 @@ public class ParseExample : MonoBehaviour {
 		}
 
 
+
+
+	}
+
+	// Update is called once per frame
+	void Update () {
+
+		while(location_queue.Count > 0){
+			SingleLocation single_location = (SingleLocation) location_queue.Dequeue();
+			GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			sphere.transform.parent = this.transform;
+			sphere.transform.position = new Vector3(single_location.Lat,1.0F,single_location.Lon);
+			sphere.renderer.material.shader = Shader.Find( "Transparent/Diffuse" );
+			sphere.renderer.material.color = new Color(0,1.0f,1.0f,.25f);
+		}
 
 
 	}
