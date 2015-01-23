@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{401284AD-E658-015E-913E-11439AB8C595}</ProjectGuid>
+	<ProjectGuid>{92D1AD68-A7C5-6703-F1F7-A67ED0150CD8}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -54,7 +54,7 @@
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Parse.Unity">
- <HintPath>/Users/iking/Documents/UAF_2015/ParseUnityStarterProject-CSharp-1.3.2/Assets/Parse/Parse.Unity.dll</HintPath>
+ <HintPath>/Users/iking/Documents/UAF_2015/uaf_2015_code/unity_parse/daves_code/Assets/Parse/Parse.Unity.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

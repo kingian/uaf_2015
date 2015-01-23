@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../jesses_code/Assets/ParseExample.cs">
+    <Files>
+      <File FileName="../jesses_code/Assets/ParseExample.cs" Line="1" Column="1" />
+      <File FileName="../jesses_code/Assets/SingleLocation.cs" Line="22" Column="65" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
