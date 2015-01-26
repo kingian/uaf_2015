@@ -50,6 +50,7 @@
      <Compile Include="Assets\PagingInfo.cs" />
      <Compile Include="Assets\ParseExample.cs" />
      <Compile Include="Assets\SingleLocation.cs" />
+     <Compile Include="Assets\WiggleObject.cs" />
      <Compile Include="Assets\manySpheres.cs" />
      <None Include="Assets\link.xml" />
      <None Include="Assets\Parse\Parse.Unity.xml" />

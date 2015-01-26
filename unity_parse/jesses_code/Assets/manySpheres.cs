@@ -35,6 +35,8 @@ public class manySpheres : MonoBehaviour {
 			sphere.renderer.material.color = new Color (1.0f,0, 0, 1.0f);
 			this.jessesList.AddLast(sphere);
 
+			sphere.AddComponent("WiggleObject");
+
 			numTriangles = sphere.GetComponent<MeshFilter>().mesh.triangles.Length/3;
 		}
 		Debug.Log (this.jessesList.Count);

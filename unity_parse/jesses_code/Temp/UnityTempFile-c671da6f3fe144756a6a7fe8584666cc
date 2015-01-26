@@ -47,6 +47,7 @@
 'Assets/PagingInfo.cs'
 'Assets/ParseExample.cs'
 'Assets/SingleLocation.cs'
+'Assets/WiggleObject.cs'
 'Assets/manySpheres.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Runtime.Serialization.dll'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Xml.Linq.dll'
