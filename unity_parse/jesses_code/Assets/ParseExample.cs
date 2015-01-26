@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 //needed for IEnumerable
 using System.Collections.Generic;
+using System;//<---needed for DateTime, which is code the deals with the complexities of "dates" and "time"
+
 
 using Parse;
 
@@ -9,6 +11,8 @@ using Parse;
 public class ParseExample : MonoBehaviour {
 
 	Queue<SingleLocation> location_queue = new Queue<SingleLocation>();
+	private DateTime date_offset;
+	private int items_per_page = 1000;
 
 	// Use this for initialization
 	void Start () {
@@ -86,7 +90,7 @@ public class ParseExample : MonoBehaviour {
 	public IEnumerator getDataInPages(){
 
 		//parse maxes out at 1k
-		int items_per_page = 250;
+		//int items_per_page = 250;//moved to private class var for reuse
 		int total_items = 0;//dunno how many yet
 
 		//counting objetcs example -- supposedly inaccurate for alrge datasets like our
@@ -97,12 +101,12 @@ public class ParseExample : MonoBehaviour {
 		total_items = task.Result;
 
 
-		int page_count = total_items / items_per_page;
+		int page_count = total_items / this.items_per_page;
 		for (int i = 0; i < page_count; i++) 
 		{
 			PagingInfo page = new PagingInfo ();
 			page.PageIndex = i;
-			page.PageSize = items_per_page;
+			page.PageSize = this.items_per_page;
 			yield return StartCoroutine("GetDataAndMakeSpheres", page);
 		}
 
@@ -110,12 +114,17 @@ public class ParseExample : MonoBehaviour {
 	}
 
 	public IEnumerator GetDataAndMakeSpheres(PagingInfo page){
-
+	
 		//using paging to make fetch delay
 		//yield return new WaitForSeconds (2.0f * page.PageIndex);
 
 		Debug.Log("FETCHING DATA:" + page.SkipAmount);
 		var query = new ParseQuery<SingleLocation>().OrderBy("time").Limit(page.PageSize).Skip(page.SkipAmount);
+
+		if (page.PageIndex > 0 && this.date_offset != null) {
+			query = new ParseQuery<SingleLocation>().OrderBy("time").Limit(page.PageSize).Skip(0).WhereGreaterThanOrEqualTo("time", this.date_offset);
+		}
+
 		var task = query.FindAsync();
 		while (!task.IsCompleted)
 						yield return null;//new WaitForSeconds(500.0f/page.PageSize);
@@ -161,6 +170,10 @@ public class ParseExample : MonoBehaviour {
 
 				location_queue.Enqueue(single_location);
 
+
+				if(count == this.items_per_page){
+					this.date_offset = single_location.Time;
+				}
 
 				//yield return new WaitForSeconds(0.05f);//helpful if doing tweens or animations on eachobject
 			}

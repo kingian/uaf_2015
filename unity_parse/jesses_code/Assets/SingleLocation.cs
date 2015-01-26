@@ -8,18 +8,19 @@ public class SingleLocation : ParseObject {
 	//going to center everything on my house
 	private float LatOffset = 40.73962f;
 	private float LonOffset = -111.872f;
+	private int Scale = 1000;
 
 	//example of mapping Parse columns ToString ICustomFormatter "proprties"
 	[ParseFieldName("lat")]
 	public float Lat{
-		get { return (GetProperty<float> ("Lat") - this.LatOffset) * -24000; }
+		get { return (GetProperty<float> ("Lat") - this.LatOffset) * -this.Scale; }
 		//no setters - setters are for saving. we wont be
 		//set {//save stuff in here}
 	}
 
 	[ParseFieldName("lon")]
 	public float Lon{
-		get { return (GetProperty<float>("Lon") - this.LonOffset) * 24000 ; }
+		get { return (GetProperty<float>("Lon") - this.LonOffset) * this.Scale ; }
 	}
 
 	[ParseFieldName("time")]
