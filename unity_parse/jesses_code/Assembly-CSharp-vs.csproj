@@ -46,10 +46,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\PagingInfo.cs" />
-     <Compile Include="Assets\ParseExample.cs" />
-     <Compile Include="Assets\SingleLocation.cs" />
-     <Compile Include="Assets\manySpheres.cs" />
+     <Compile Include="Assets\scripts\BouncyBall.cs" />
+     <Compile Include="Assets\scripts\FPSDisplay.cs" />
+     <Compile Include="Assets\scripts\PagingInfo.cs" />
+     <Compile Include="Assets\scripts\ParseExample.cs" />
+     <Compile Include="Assets\scripts\SingleLocation.cs" />
+     <Compile Include="Assets\scripts\WiggleObject.cs" />
+     <Compile Include="Assets\scripts\manySpheres.cs" />
      <None Include="Assets\link.xml" />
      <None Include="Assets\Parse\Parse.Unity.xml" />
      <None Include="Assets\Parse\third_party_licenses.txt" />
