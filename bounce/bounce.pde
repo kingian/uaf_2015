@@ -1,16 +1,22 @@
-import controlP5.*;
+ import controlP5.*;
 
 
 ControlP5 cp5;
 Ball b;
 ArrayList<Ball> balls;
-int max, vel;
+int max, vel, ghost, size, bg;
 Slider Velocity;
 Slider NumberOfBalls;
+Slider Ghosting;
+Slider Size;
+Slider Background;
 void setup()
 {
-  max = 5000;
+  max = 500;
   vel = 15;
+  ghost = 80;
+  size = 10;
+  bg = 200;
   size(1200,800);
   noStroke();
   ellipseMode(RADIUS);
@@ -23,7 +29,7 @@ void setup()
              .setWidth(300)
              .activateEvent(true)
              .setBackgroundColor(color(128,50))
-             .setBackgroundHeight(100)
+             .setBackgroundHeight(200)
              .setLabel("Bounce Controls")
              ;
   NumberOfBalls = cp5.addSlider("NumberOfBalls")
@@ -44,8 +50,35 @@ void setup()
               .setValue(vel)
               ;
               
-   cp5.addButton("Reset")
+  Size = cp5.addSlider("Size")
               .setPosition(10,70)
+              .setSize(200,20)
+              .setGroup(g1)
+              .setLabel(" Size Range")
+              .setRange(1,25)
+              .setValue(size)
+              ;
+
+  Ghosting = cp5.addSlider("Ghosting")
+              .setPosition(10,100)
+              .setSize(200,20)
+              .setGroup(g1)
+              .setLabel(" Ghosting")
+              .setRange(100,1)
+              .setValue(ghost)
+              ;
+              
+  Background = cp5.addSlider("Background")
+              .setPosition(10,130)
+              .setSize(200,20)
+              .setGroup(g1)
+              .setLabel(" Background Value")
+              .setRange(0,255)
+              .setValue(bg)
+              ;              
+              
+   cp5.addButton("Reset")
+              .setPosition(10,160)
               .setSize(100,20)
               .setGroup(g1)
               ;
@@ -58,7 +91,7 @@ void setup()
 void draw()
 {
   noStroke();
-  fill(200,10);
+  fill(bg,ghost);
   rect(0,0,width,height);
   for(int j = 0; j < max; j++)
   {
@@ -73,10 +106,13 @@ public void controlEvent(ControlEvent theEvent)
 {
    if (theEvent.getController().getName().equals("Reset"))
    {
-      fill(200);
+      fill(bg);
       rect(0,0,width,height);
       max = (int)NumberOfBalls.getValue();
       vel = (int)Velocity.getValue();
+      ghost = (int)Ghosting.getValue();
+      size = (int)Size.getValue();
+      bg = (int)Background.getValue();
       fillBallArray();
       draw(); 
    }
@@ -91,7 +127,7 @@ void fillBallArray()
   {
     PVector l = new PVector((width/2+random(-width/4,width/4)),(height/2+random(-height/4,height/4)));
     PVector v = new PVector(random(-vel,vel),random(-vel,vel));
-    b = new Ball(l,v,random(1,10));
+    b = new Ball(l,v,random(1,size));
     b.setColor(color(random(128,255),0,0));
     balls.add(b);
   }
