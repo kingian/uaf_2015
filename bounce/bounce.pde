@@ -1,6 +1,8 @@
  import controlP5.*;
 
 
+
+// Project scoped variables
 ControlP5 cp5;
 Ball b;
 ArrayList<Ball> balls;
@@ -10,6 +12,10 @@ Slider NumberOfBalls;
 Slider Ghosting;
 Slider Size;
 Slider Background;
+
+
+
+
 void setup()
 {
   max = 500;
