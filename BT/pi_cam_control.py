@@ -10,6 +10,7 @@ remote_target = ""
 def compressImgDir(targetfile,targetdirectory):
 	subprocess.check_output(["tar","-zcvf",targetfile,targetdirectory])
 
+	
 
 def startServices():
 	global motion_pid
