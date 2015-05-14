@@ -2,10 +2,11 @@ import select
 import socket
 import sys
 import threading
+import thread
 import argparse
 
 host = ''
-port = 50001
+port = 50000
 size = 1024
 
 """ The main server class. """
@@ -14,6 +15,7 @@ class Server:
         self.backlog = 5
         self.server = None
         self.threads = []
+        self.serverRunning = True
 
     def open_socket(self):
         try:
@@ -26,39 +28,54 @@ class Server:
             print "Could not open socket: " + message
             sys.exit(1)
 
+    def close_client(self, sock):
+        for client in self.threads:
+            if client.is_socket(sock):
+                self.threads.remove(client)
+                client.close()
+                print("Client disconnected.")
+
     def run(self):
         self.open_socket()
-        input = [self.server,sys.stdin]
-        running = 1
-        while running:
-            inputready,outputready,exceptready = select.select(input,[],[])
+        inputs = [self.server, sys.stdin]
 
-            for s in inputready:
+        while self.serverRunning:
+            try:
+                input_ready, output_ready, except_ready = select.select(inputs, self.threads, [])
+            except select.error, err:
+                break
+            except socket.error, err:
+                # for socket_output in output_ready:
+                #     print("Client disconnected.")
+                #     socket_output.close()
+                break
 
-                print s
+            for sock in input_ready:
+                if sock == self.server:
+                    # handle the server client socket
+                    client = ServerClient(self.server.accept())
+                    client.start()
+                    self.threads.append(client)
 
-                if s == self.server:
-                    # handle the server socket
-                    c = ServerClient(self.server.accept())
-                    c.start()
-                    self.threads.append(c)
-
-                elif s == sys.stdin:
-                    # handle standard input
+                elif sock == sys.stdin:
+                    # handle input from the console.
                     command = sys.stdin.readline()
-                    print("Received the command: %s" % command)
-                    if str.strip(command) == "quit":
-                        # close all threads
-                        running = 0
-                        continue
-                    elif str.strip(command).startswith("::"):
+                    if str.strip(command).startswith("::"):
+                        if str.strip(command) == "quit":
+                            # close all threads
+                            self.serverRunning = False
+                            continue
+                    else:
                         print("Sending message to all clients.")
                         for t in self.threads:
-                            t.sendMessageToClient(str.strip(command).strip("::"))
+                            t.send_message_to_client(str.strip(command))
+                else:
+                    print("Some message...")
 
         self.server.close()
-        for c in self.threads:
-            c.join()
+        for client in self.threads:
+            client.close()
+            client.join()
 
 """ A class that represents a client on the server. """
 class ServerClient(threading.Thread):
@@ -78,21 +95,60 @@ class ServerClient(threading.Thread):
                 self.client.close()
                 running = 0
 
-    def sendMessageToClient(self, message):
+    def send_message_to_client(self, message):
         self.client.send(message)
 
+    def close(self):
+        self.client.close()
 
-""" The class that runs for on a client system."""
+    def is_socket(self, sock):
+        return self.client == sock
+
+    def fileno(self):
+        return self.client.fileno()
+
+
+""" The class that runs on a client system."""
 class Client():
     def __init__(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.keepRunning = True
 
     def run(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((host, port))
-        sys.stdout.write('%')
+        self.socket.connect((host, port))
+
+        try:
+            child_thread_server_listener = threading.Thread(target=self.server_listener())
+            child_thread_server_listener.start()
+
+            # child_thread_keyboard_listener = threading.Thread(target=self.keyboard_listener())
+            # child_thread_keyboard_listener.start()
+
+            # join the threads to wait for all of them to finish.
+            # child_thread_keyboard_listener.join()
+            child_thread_server_listener.join()
+
+            # serverListenerThread = thread.start_new_thread(self.server_listener())
+            # keyboardListenerThread = thread.start_new_thread(self.keyboard_listener())
+        except KeyboardInterrupt:
+            print("\nClosing the connection")
+
+        self.socket.close()
+
+    def server_listener(self):
+        print("Server listener active:")
 
         while self.keepRunning:
+            # check for more data receive queue.
+            data = self.socket.recv(size)
+            sys.stdout.write("Received: %s\n" % data)
+            sys.stdout.flush()
+
+    def keyboard_listener(self):
+        print("Keyboard listener active")
+        while self.keepRunning:
+            sys.stdout.write('% ')
+
             # read from keyboard
             # may need to spawn this on a separate thread or have the listener on a separate thread. Right now it will
             # only display the message AFTER keyboard input has been received. This won't be a big deal in the real
@@ -105,14 +161,8 @@ class Client():
                 continue
 
             # send the data (message) from the command line.
-            s.send(line)
+            self.socket.send(line)
 
-            #check for more data receive queue.
-            data = s.recv(size)
-
-            sys.stdout.write(data)
-            sys.stdout.write('%')
-        s.close()
 
 
 if __name__ == "__main__":
