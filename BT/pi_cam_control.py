@@ -3,14 +3,17 @@ import sys
 import subprocess
 import time
 
+
 cleaner_pid = 0
 motion_pid = 0
 remote_target = ""
 
-def compressImgDir(targetfile,targetdirectory):
+def compressDir(targetfile,targetdirectory):
 	subprocess.check_output(["tar","-zcvf",targetfile,targetdirectory])
 
-	
+def moveImages():
+	pass
+
 
 def startServices():
 	global motion_pid
