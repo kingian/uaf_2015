@@ -6,7 +6,7 @@ import thread
 import argparse
 
 host = ''
-port = 50000
+port = 50001
 size = 1024
 
 """ The main server class. """
@@ -41,7 +41,7 @@ class Server:
 
         while self.serverRunning:
             try:
-                input_ready, output_ready, except_ready = select.select(inputs, self.threads, [])
+                input_ready, output_ready, except_ready = select.select(inputs, [], [])
             except select.error, err:
                 break
             except socket.error, err:
@@ -79,7 +79,7 @@ class Server:
 
 """ A class that represents a client on the server. """
 class ServerClient(threading.Thread):
-    def __init__(self,(client,address)):
+    def __init__(self, (client, address)):
         threading.Thread.__init__(self)
         self.client = client
         self.address = address
@@ -121,8 +121,8 @@ class Client():
             child_thread_server_listener = threading.Thread(target=self.server_listener())
             child_thread_server_listener.start()
 
-            # child_thread_keyboard_listener = threading.Thread(target=self.keyboard_listener())
-            # child_thread_keyboard_listener.start()
+            child_thread_keyboard_listener = threading.Thread(target=self.keyboard_listener())
+            child_thread_keyboard_listener.start()
 
             # join the threads to wait for all of them to finish.
             # child_thread_keyboard_listener.join()
@@ -140,7 +140,16 @@ class Client():
 
         while self.keepRunning:
             # check for more data receive queue.
-            data = self.socket.recv(size)
+            try:
+                data = self.socket.recv(size)
+            except select.error, err:
+                break
+            except socket.error, err:
+                # for socket_output in output_ready:
+                #     print("Client disconnected.")
+                #     socket_output.close()
+                break
+
             sys.stdout.write("Received: %s\n" % data)
             sys.stdout.flush()
 
