@@ -139,3 +139,9 @@ update-rc.d SERVICENAME disable
 
 Imaging an SD card
 https://www.raspberrypi.org/forums/viewtopic.php?f=91&t=46911
+    - sudo fdisk -l
+    - sudo dd bs=4M if=/dev/sdb | gzip > /home/your_username/image`date +%d%m%y`.gz
+    - sudo gzip -dc /home/your_username/image.gz | dd bs=4M of=/dev/sdb
+
+Set Static IP via CLI
+ifconfig eth0 XXX.XXX.XXX.XXX netmask 255.255.255.0 up
