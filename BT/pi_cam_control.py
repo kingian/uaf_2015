@@ -30,9 +30,9 @@ def startServices():
 		cleaner_pid = cleaner.pid
 		motion_pid = int(subprocess.check_output(["pgrep","motion"]))
 #           DEBUGGING LINES
-#	    print (subprocess.check_output(["pgrep","motion"]))
-#	    print ("Motion PID:%d" % m_pid)
-#	    print ("Cleaner PID:%d" % c_pid)
+	    print (subprocess.check_output(["pgrep","motion"]))
+	    print ("Motion PID:%d" % m_pid)
+	    print ("Cleaner PID:%d" % c_pid)
 		print ("Motion and Cleaner services sucessfully started.\n")
 		return [m_pid,c_pid]
 	except Exception, err:
