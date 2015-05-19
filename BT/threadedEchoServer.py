@@ -5,8 +5,9 @@ import sys
 import threading
 import thread
 import argparse
+import ip_id as ip
 
-host = ''
+host = ip.get_ip_address()
 port = 50002
 size = 1024
 
