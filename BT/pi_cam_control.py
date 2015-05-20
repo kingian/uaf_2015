@@ -3,6 +3,7 @@ import sys
 import subprocess
 import time
 import commands
+import json
 
 
 class CamControl:
@@ -11,19 +12,23 @@ class CamControl:
 	motion_pid = 0
 	remote_target = ""
 	local_target = ""
+	image_tarball = ""
+	mot_dir = "/tmp/motion"
 
 
-	def compressDir(self,targetfile,targetdirectory):
-		subprocess.check_output(["tar","-zcvf",targetfile,targetdirectory])
+	def getConfig(self,filename):
+		confile = open(filename,'r+')
+		configurations = json.load(filename)
+		self.local_target = configurations['LOCAL']
+		self.remote_target = configurations['REMOTE']
+	
+	def compressDir(self):
+		self.image_tarball = str(int(time.time())) + '.tar.gz'
+		subprocess.check_output(["tar","-zcvf",image_tarball,mot_dir])
 
 	
 	def moveImages(self):
 		subprocess.check_output(["scp",self.local_target,self.remote_target])
-
-
-	def setTargets(self,remote,local):
-		self.remote_target = remote
-		self.local_target = local
 	
 	
 	def startServices(self):
@@ -35,10 +40,10 @@ class CamControl:
 			time.sleep(0.05)
 			self.cleaner_pid = cleaner.pid
 			self.motion_pid = int(subprocess.check_output(["pgrep","motion"]))
-	#           DEBUGGING LINES
-			print (subprocess.check_output(["pgrep","motion"]))
-			print ("Motion PID:%d" % self.motion_pid)
-			print ("Cleaner PID:%d" % self.cleaner_pid)
+#           DEBUGGING LINES
+#			print (subprocess.check_output(["pgrep","motion"]))
+#			print ("Motion PID:%d" % self.motion_pid)
+#			print ("Cleaner PID:%d" % self.cleaner_pid)
 			print ("Motion and Cleaner services sucessfully started.\n")
 			return [self.motion_pid,self.cleaner_pid]
 		except Exception, err:
