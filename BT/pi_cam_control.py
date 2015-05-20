@@ -18,16 +18,12 @@ class CamControl:
 
 	
 	def moveImages(self):
-		self.remote_target
-		self.local_target
-		subprocess.check_output(["scp",local_target,remote_target])
+		subprocess.check_output(["scp",self.local_target,self.remote_target])
 
 
 	def setTargets(self,remote,local):
-		self.remote_target
-		self.local_target
-		remote_target = remote
-		local_target = local
+		self.remote_target = remote
+		self.local_target = local
 	
 	
 	def startServices(self):
@@ -51,31 +47,23 @@ class CamControl:
 
 		
 	def pauseServices(self):
-		global motion_pid
-		global cleaner_pid
 		subprocess.check_output(["sudo","kill","-STOP","%d" % self.motion_pid])
 		subprocess.check_output(["kill","-STOP","%d" % self.cleaner_pid])
 	
 	
 	def resumeServices(self):
-		global motion_pid
-		global cleaner_pid
 		subprocess.check_output(["kill","-CONT","%d" % self.cleaner_pid])
 		subprocess.check_output(["sudo","kill","-CONT","%d" % self.motion_pid])
 	
 	def endServices(self):
-		global motion_pid
-		global cleaner_pid
 		subprocess.check_output(["sudo","kill","-9","%d" % self.motion_pid])
 		subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
 
 	
 	def printMenu(self,message):
-		global motion_pid
-		global cleaner_pid
 		subprocess.call("clear")
 		print (message)
-		print ("Motion PID:%d" % motion_pid + " Cleaner PID:%d" % cleaner_pid)
+		print ("Motion PID:%d" % self.motion_pid + " Cleaner PID:%d" % self.cleaner_pid)
 		print ("The following are valid commands:")
 		print ("  pause")
 		print ("  continue")
