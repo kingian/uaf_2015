@@ -34,7 +34,7 @@ class CamControl:
 			subprocess.call(["sudo", "service","motion", "start"])
 			time.sleep(0.05)
 			self.cleaner_pid = cleaner.pid
-			motion_pid = int(subprocess.check_output(["pgrep","motion"]))
+			self.motion_pid = int(subprocess.check_output(["pgrep","motion"]))
 	#           DEBUGGING LINES
 			print (subprocess.check_output(["pgrep","motion"]))
 			print ("Motion PID:%d" % self.motion_pid)
