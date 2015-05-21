@@ -31,7 +31,7 @@ class CamControl:
 	
 	def moveImages(self):
 		sendReq = pexpect.spawn('scp',[self.local_target,self.remote_target])
-		sendReq.except('Password:')
+		sendReq.expect('Password:')
 		sendReq.sendline(target_pw)
 
 	
