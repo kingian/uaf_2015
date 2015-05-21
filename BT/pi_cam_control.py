@@ -4,12 +4,14 @@ import subprocess
 import time
 import commands
 import json
+import pexpect
 
 
 class CamControl:
 
 	cleaner_pid = 0
 	motion_pid = 0
+	target_pw = "ubuntu"
 	remote_target = ""
 	local_target = ""
 	image_tarball = ""
@@ -28,7 +30,10 @@ class CamControl:
 
 	
 	def moveImages(self):
-		subprocess.check_output(["scp",self.local_target,self.remote_target])
+		sendReq = pexpect.spawn('scp',[self.local_target,self.remote_target])
+		sendReq.except('Password:')
+		sendReq.sendline(target_pw)
+
 	
 	
 	def startServices(self):
