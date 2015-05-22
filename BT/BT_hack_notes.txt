@@ -145,3 +145,11 @@ https://www.raspberrypi.org/forums/viewtopic.php?f=91&t=46911
 
 Set Static IP via CLI
 ifconfig eth0 XXX.XXX.XXX.XXX netmask 255.255.255.0 up
+
+http://www.modmypi.com/blog/tutorial-how-to-give-your-raspberry-pi-a-static-ip-address
+
+address 10.6.66.61
+netmask 255.255.255.0
+network 10.6.66.0
+broadcast 10.6.66.255
+gateway 10.6.66.1
