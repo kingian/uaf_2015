@@ -6,7 +6,7 @@ from pi_cam_control import *
 
 if __name__ == "__main__":
 	camcon = CamControl()
-	camcon.getConfig('congig.json')
+	camcon.getConfig('config.json')
 	pids = camcon.startServices()
 	
         motion_pid = pids[0]
