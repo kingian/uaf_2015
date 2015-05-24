@@ -20,7 +20,7 @@ class CamControl:
 
 	def getConfig(self,filename):
 		confile = open(filename,'r+')
-		configurations = json.load(filename)
+		configurations = json.load(confile)
 		self.local_target = configurations['LOCAL']
 		self.remote_target = configurations['REMOTE']
 	
