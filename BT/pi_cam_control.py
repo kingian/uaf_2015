@@ -19,20 +19,33 @@ class CamControl:
 
 
 	def getConfig(self,filename):
-		confile = open(filename,'r+')
-		configurations = json.load(confile)
-		self.local_target = configurations['LOCAL']
-		self.remote_target = configurations['REMOTE']
+		try:
+			confile = open(filename,'r+')
+			configurations = json.load(confile)
+			self.local_target = configurations['LOCAL']
+			self.remote_target = configurations['REMOTE']
+		except:
+			print ("An error occured reading the configuration file.\n")
+			print traceback.format_exc()
+			
 	
 	def compressDir(self):
-		self.image_tarball = str(int(time.time())) + '.tar.gz'
-		subprocess.check_output(["tar", "-zcvf", self.image_tarball, self.mot_dir])
+		try:
+			self.image_tarball = str(int(time.time())) + '.tar.gz'
+			subprocess.check_output(["tar", "-zcvf", self.image_tarball, self.mot_dir])
+		except:
+			print ("An error occured compressing the motion folder.\n")
+			print traceback.format_exc()
 
 	
 	def moveImages(self):
-		sendReq = pexpect.spawn('scp',[self.local_target,self.remote_target])
-		sendReq.expect('Password:')
-		sendReq.sendline(target_pw)
+		try:
+			sendReq = pexpect.spawn('scp',[self.local_target,self.remote_target])
+			sendReq.expect('Password:')
+			sendReq.sendline(target_pw)
+		except:
+			print ("An error occured compressing the motion folder.\n")
+			print traceback.format_exc()
 
 	
 	
@@ -57,17 +70,30 @@ class CamControl:
 
 		
 	def pauseServices(self):
-		subprocess.check_output(["sudo","kill","-STOP","%d" % self.motion_pid])
-		subprocess.check_output(["kill","-STOP","%d" % self.cleaner_pid])
+		try:
+			subprocess.check_output(["sudo","kill","-STOP","%d" % self.motion_pid])
+			subprocess.check_output(["kill","-STOP","%d" % self.cleaner_pid])
+		except:
+			print ("An error occured pausing services.\n")
+			print traceback.format_exc()
 	
 	
 	def resumeServices(self):
-		subprocess.check_output(["kill","-CONT","%d" % self.cleaner_pid])
-		subprocess.check_output(["sudo","kill","-CONT","%d" % self.motion_pid])
-	
+		try:
+			subprocess.check_output(["kill","-CONT","%d" % self.cleaner_pid])
+			subprocess.check_output(["sudo","kill","-CONT","%d" % self.motion_pid])
+		except:
+			print ("An error occured resuming services.\n")
+			print traceback.format_exc()
+
+		
 	def endServices(self):
-		subprocess.check_output(["sudo","kill","-9","%d" % self.motion_pid])
-		subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
+		try:
+			subprocess.check_output(["sudo","kill","-9","%d" % self.motion_pid])
+			subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
+		except:
+			print ("An error occured ending services.\n")
+			print traceback.format_exc()
 
 	
 	def printMenu(self,message):
