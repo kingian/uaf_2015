@@ -26,7 +26,7 @@ class CamControl:
 	
 	def compressDir(self):
 		self.image_tarball = str(int(time.time())) + '.tar.gz'
-		subprocess.check_output(["tar","-zcvf",image_tarball,mot_dir])
+		subprocess.check_output(["tar", "-zcvf", self.image_tarball, self.mot_dir])
 
 	
 	def moveImages(self):
@@ -75,9 +75,11 @@ class CamControl:
 		print (message)
 		print ("Motion PID:%d" % self.motion_pid + " Cleaner PID:%d" % self.cleaner_pid)
 		print ("The following are valid commands:")
-		print ("  pause")
-		print ("  continue")
-		print ("  end")
+		print ("  stop (pause services)")
+		print ("  start (start services)")
+		print ("  comp (compress directory)")
+		print ("  send (send compressed directory)")
+		print ("  end (end all services)")
 	
 	def get_ip_address(self):
 		intf = 'eth0'
