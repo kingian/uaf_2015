@@ -64,9 +64,19 @@ class CamControl:
 #			print ("An error occured compressing the motion folder.\n")
 #			print traceback.format_exc()
 
-	
+
+	def makeDirectories(self):
+		try:
+			subprocess.call(["sudo", "mkdir","/tmp/motion/cam1"])
+			subprocess.call(["sudo", "mkdir","/tmp/motion/cam2"])
+			subprocess.call(["sudo", "mkdir","/tmp/motion/cam3"])
+		except:
+			print ("An error occured making motion directories.\n")
+			print traceback.format_exc()
+			
 	
 	def startServices(self):
+		makeDirectories()
 		self.motion_pid
 		self.cleaner_pid
 		try:
