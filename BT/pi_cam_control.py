@@ -31,12 +31,12 @@ class CamControl:
 			
 	
 	def compressDir(self):
-		try:
+#		try:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
 			subprocess.check_output(["tar", "-zcvf", self.image_tarball, self.mot_dir])
-		except:
-			print ("An error occured compressing the motion folder.\n")
-			print traceback.format_exc()
+#		except:
+#			print ("An error occured compressing the motion folder.\n")
+#			print traceback.format_exc()
 
 	
 	def moveImages(self):
