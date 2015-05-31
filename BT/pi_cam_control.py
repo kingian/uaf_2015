@@ -31,7 +31,7 @@ class CamControl:
 			
 	
 	def compressDir(self):
-#		try:
+		try:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
 			subprocess.check_output(["tar", "-zcvf", self.LOCAL_FILE, self.MOTION_DIRECTORY])
 		except:
