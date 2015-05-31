@@ -122,6 +122,7 @@ class CamControl:
 		print ("  start (start services)")
 		print ("  comp (compress directory)")
 		print ("  send (send compressed directory)")
+		print ("  clean (delete compressed directory)")
 		print ("  end (end all services)")
 	
 	def get_ip_address(self):
