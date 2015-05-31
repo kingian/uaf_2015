@@ -46,7 +46,7 @@ class CamControl:
 	def moveImages(self):
 		try:
 			FILE = self.LOCAL_PATH + '/' +self.LOCAL_FILE 
-			COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
+			COMMAND="scp -o PubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 			child = pexpect.spawn(COMMAND)
 			child.expect('password:')
 			child.sendline(TARGET_PW)
