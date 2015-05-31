@@ -39,7 +39,7 @@ class CamControl:
 			print ("An error occured compressing the motion folder.\n")
 			print traceback.format_exc()
 
-	def cleanImg():
+	def cleanImg(self):
 		try:
 			subprocess.check_output(['rm', '*.tar.gz'])
 		except:
