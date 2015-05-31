@@ -39,13 +39,13 @@ class CamControl:
 
 	
 	def moveImages(self):
-		try:
+#		try:
 			sendReq = pexpect.spawn('scp',[self.local_target + self.image_tarball , self.remote_target])
 			sendReq.expect('Password:')
 			sendReq.sendline(target_pw)
-		except:
-			print ("An error occured compressing the motion folder.\n")
-			print traceback.format_exc()
+#		except:
+#			print ("An error occured compressing the motion folder.\n")
+#			print traceback.format_exc()
 
 	
 	
