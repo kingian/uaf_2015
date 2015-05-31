@@ -67,7 +67,7 @@ class CamControl:
 			
 	
 	def startServices(self):
-		self.makeDirectories()
+		err = self.makeDirectories()
 		self.motion_pid
 		self.cleaner_pid
 		try:
@@ -83,8 +83,7 @@ class CamControl:
 			print ("Motion and Cleaner services sucessfully started.\n")
 			return [self.motion_pid,self.cleaner_pid]
 		except Exception, err:
-			print ("An exception occured, Motion and Cleaner didn't start.\n")
-			print traceback.format_exc()
+			return ("An exception occured, Motion and Cleaner didn't start.\n" + traceback.format_exc())
 
 		
 	def pauseServices(self):

@@ -6,13 +6,13 @@ from pi_cam_control import *
 
 if __name__ == "__main__":
 	camcon = CamControl()
-	camcon.getConfig('config.json')
+	err = camcon.getConfig('config.json')
 	pids = camcon.startServices()
 	
         motion_pid = pids[0]
         cleaner_pid = pids[1]
 
-	camcon.printMenu("Services started")
+	camcon.printMenu("Services started",err)
 	while True:
 		s = raw_input()
 		
