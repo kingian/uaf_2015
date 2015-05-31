@@ -51,7 +51,7 @@ class CamControl:
 		COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 		child = pexpect.spawn(COMMAND)
 		child.expect('password:')
-		child.sendline(PASS)
+		child.sendline(TARGET_PW)
 		child.expect(pexpect.EOF)
 		print child.before
 		
