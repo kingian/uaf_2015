@@ -27,8 +27,7 @@ class CamControl:
 			self.LOCAL_PATH = configurations['LOCAL']
 			self.REMOTE_PATH = configurations['REMOTE']
 		except:
-			print ("An error occured reading the configuration file.\n")
-			print traceback.format_exc()
+			return ("An error occured reading the configuration file.\n" + traceback.format_exc())
 			
 	
 	def compressDir(self):
@@ -36,33 +35,25 @@ class CamControl:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
 			subprocess.check_output(["tar", "-zcvf", self.LOCAL_FILE, self.MOTION_DIRECTORY])
 		except:
-			print ("An error occured compressing the motion folder.\n")
-			print traceback.format_exc()
+			return ("An error occured compressing the motion folder.\n" + traceback.format_exc()) 
 
 	def cleanImg(self):
 		try:
 			subprocess.check_output(['rm', '*.tar.gz'])
 		except:
-			print ("An exception occured, file cleaning failed.\n")
-			print traceback.format_exc()			
+			return ("An exception occured, file cleaning failed.\n" + traceback.format_exc()) 			
 	
 	def moveImages(self):
-		FILE = self.LOCAL_PATH + '/' +self.LOCAL_FILE 
-		COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
-		child = pexpect.spawn(COMMAND)
-		child.expect('password:')
-		child.sendline(TARGET_PW)
-		child.expect(pexpect.EOF)
-		print child.before
-		
-#		try:
-#			sendReq = pexpect.spawn('scp',[self.local_target + self.image_tarball , self.remote_target])
-#			sendReq.expect('Password:')
-#			time.sleep(0.1)
-#			sendReq.sendline(target_pw)
-#		except:
-#			print ("An error occured compressing the motion folder.\n")
-#			print traceback.format_exc()
+		try:
+			FILE = self.LOCAL_PATH + '/' +self.LOCAL_FILE 
+			COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
+			child = pexpect.spawn(COMMAND)
+			child.expect('password:')
+			child.sendline(TARGET_PW)
+			child.expect(pexpect.EOF)
+			print child.before
+		except:
+			return ("An error occured compressing the motion folder.\n" + traceback.format_exc())
 
 
 	def makeDirectories(self):
@@ -71,8 +62,8 @@ class CamControl:
 			subprocess.call(["sudo", "mkdir","/tmp/motion/cam2"])
 			subprocess.call(["sudo", "mkdir","/tmp/motion/cam3"])
 		except:
-			print ("An error occured making motion directories.\n")
-			print traceback.format_exc()
+			return ("An error occured making motion directories.\n" + traceback.format_exc())
+
 			
 	
 	def startServices(self):
@@ -101,8 +92,7 @@ class CamControl:
 			subprocess.check_output(["sudo","kill","-STOP","%d" % self.motion_pid])
 			subprocess.check_output(["kill","-STOP","%d" % self.cleaner_pid])
 		except:
-			print ("An error occured pausing services.\n")
-			print traceback.format_exc()
+			return ("An error occured pausing services.\n" + traceback.format_exc())
 	
 	
 	def resumeServices(self):
@@ -110,8 +100,7 @@ class CamControl:
 			subprocess.check_output(["kill","-CONT","%d" % self.cleaner_pid])
 			subprocess.check_output(["sudo","kill","-CONT","%d" % self.motion_pid])
 		except:
-			print ("An error occured resuming services.\n")
-			print traceback.format_exc()
+			return ("An error occured resuming services.\n" + traceback.format_exc())
 
 		
 	def endServices(self):
@@ -119,13 +108,13 @@ class CamControl:
 			subprocess.check_output(["sudo","kill","-9","%d" % self.motion_pid])
 			subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
 		except:
-			print ("An error occured ending services.\n")
-			print traceback.format_exc()
+			return ("An error occured ending services.\n" + traceback.format_exc())
 
 	
-	def printMenu(self,message):
+	def printMenu(self,message,error):
 		subprocess.call("clear")
 		print (message)
+		print (error)
 		print ("Motion PID:%d" % self.motion_pid + " Cleaner PID:%d" % self.cleaner_pid)
 		print ("The following are valid commands:")
 		print ("  stop (pause services)")
