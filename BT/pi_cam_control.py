@@ -16,7 +16,7 @@ class CamControl:
 	REMOTE_PATH = ""
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
-	mot_dir = "/tmp/motion"
+	MOTION_DIRECTORY = "/tmp/motion"
 
 
 	def getConfig(self,filename):
@@ -33,10 +33,10 @@ class CamControl:
 	def compressDir(self):
 #		try:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
-			subprocess.check_output(["tar", "-zcvf", self.image_tarball, self.mot_dir])
-#		except:
-#			print ("An error occured compressing the motion folder.\n")
-#			print traceback.format_exc()
+			subprocess.check_output(["tar", "-zcvf", self.LOCAL_FILE, self.MOTION_DIRECTORY])
+		except:
+			print ("An error occured compressing the motion folder.\n")
+			print traceback.format_exc()
 
 	
 	def moveImages(self):
