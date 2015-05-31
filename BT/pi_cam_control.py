@@ -13,6 +13,7 @@ class CamControl:
 	motion_pid = 0
 	REMOTE_USER = "ubuntu" 
 	TARGET_PW = "ubuntu"
+	HOST = "10.6.66.118"
 	REMOTE_PATH = ""
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
@@ -41,7 +42,7 @@ class CamControl:
 	
 	def moveImages(self):
 		FILE = self.LOCAL_PATH + '/' +self.LOCAL_FILE 
-		COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, USER, HOST, REMOTE_FILE)
+		COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.USER, self.HOST, self.REMOTE_FILE)
 		child = pexpect.spawn(COMMAND)
 		child.expect('password:')
 		child.sendline(PASS)
