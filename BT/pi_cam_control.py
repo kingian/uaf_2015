@@ -42,7 +42,7 @@ class CamControl:
 	def cleanImg():
 		try:
 			subprocess.check_output(['rm', '*.tar.gz'])
-		except
+		except:
 			print ("An exception occured, file cleaning failed.\n")
 			print traceback.format_exc()			
 	
