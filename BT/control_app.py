@@ -28,6 +28,9 @@ if __name__ == "__main__":
 		elif (s == "send"):
 			camcon.moveImages()
 			camcon.printMenu("Tarball copied to remote host")
+		elif (s == "clean"):
+			camcon.cleanImg()
+			camcon.printMenu("Tarball deleted")
 		elif (s == "end"):
 			camcon.endServices()
 			print ("Services terminated.")

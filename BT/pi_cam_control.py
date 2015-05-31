@@ -39,6 +39,12 @@ class CamControl:
 			print ("An error occured compressing the motion folder.\n")
 			print traceback.format_exc()
 
+	def cleanImg():
+		try:
+			subprocess.check_output(['rm', '*.tar.gz'])
+		except
+			print ("An exception occured, file cleaning failed.\n")
+			print traceback.format_exc()			
 	
 	def moveImages(self):
 		FILE = self.LOCAL_PATH + '/' +self.LOCAL_FILE 
