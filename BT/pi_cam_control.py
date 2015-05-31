@@ -11,10 +11,11 @@ class CamControl:
 
 	cleaner_pid = 0
 	motion_pid = 0
-	target_pw = "ubuntu"
-	remote_target = ""
-	local_target = ""
-	image_tarball = ""
+	REMOTE_USER = "ubuntu" 
+	TARGET_PW = "ubuntu"
+	REMOTE_PATH = ""
+	LOCAL_PATH = ""
+	LOCAL_FILE = ""
 	mot_dir = "/tmp/motion"
 
 
@@ -22,8 +23,8 @@ class CamControl:
 		try:
 			confile = open(filename,'r+')
 			configurations = json.load(confile)
-			self.local_target = configurations['LOCAL']
-			self.remote_target = configurations['REMOTE']
+			self.LOCAL_PATH = configurations['LOCAL']
+			self.REMOTE_PATH = configurations['REMOTE']
 		except:
 			print ("An error occured reading the configuration file.\n")
 			print traceback.format_exc()
@@ -31,7 +32,7 @@ class CamControl:
 	
 	def compressDir(self):
 		try:
-			self.image_tarball = str(int(time.time())) + '.tar.gz'
+			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
 			subprocess.check_output(["tar", "-zcvf", self.image_tarball, self.mot_dir])
 		except:
 			print ("An error occured compressing the motion folder.\n")
@@ -39,10 +40,19 @@ class CamControl:
 
 	
 	def moveImages(self):
+		FILE = LOCAL_PATH + LOCAL_FILE 
+		COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, USER, HOST, REMOTE_FILE)
+		child = pexpect.spawn(COMMAND)
+		child.expect('password:')
+		child.sendline(PASS)
+		child.expect(pexpect.EOF)
+		print child.before
+		
 #		try:
-			sendReq = pexpect.spawn('scp',[self.local_target + self.image_tarball , self.remote_target])
-			sendReq.expect('Password:')
-			sendReq.sendline(target_pw)
+#			sendReq = pexpect.spawn('scp',[self.local_target + self.image_tarball , self.remote_target])
+#			sendReq.expect('Password:')
+#			time.sleep(0.1)
+#			sendReq.sendline(target_pw)
 #		except:
 #			print ("An error occured compressing the motion folder.\n")
 #			print traceback.format_exc()
