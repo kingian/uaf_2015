@@ -76,7 +76,7 @@ class CamControl:
 			
 	
 	def startServices(self):
-		makeDirectories()
+		self.makeDirectories()
 		self.motion_pid
 		self.cleaner_pid
 		try:
