@@ -5,11 +5,9 @@ import sys
 import threading
 import thread
 import argparse
-import ip_id as ip
 
-host = ip.get_ip_address()
-port = 50002
-size = 1024
+PORT = 50003
+MAX_READ_SIZE = 1024
 
 """ The main server class. """
 class Server:
@@ -22,20 +20,13 @@ class Server:
     def open_socket(self):
         try:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server.bind((host, port))
+            self.server.bind(('', PORT))
             self.server.listen(self.backlog)
         except socket.error, (value,message):
             if self.server:
                 self.server.close()
             print "Could not open socket: " + message
             sys.exit(1)
-
-    def close_client(self, sock):
-        for client in self.threads:
-            if client.is_socket(sock):
-                self.threads.remove(client)
-                client.close()
-                print("Client disconnected.")
 
     def run(self):
         self.open_socket()
@@ -48,7 +39,7 @@ class Server:
                 break
             except socket.error, err:
                 for socket_output in output_ready:
-                    print("Client disconnected.")
+                    print("Client disconnected")
                     socket_output.close()
                 break
 
@@ -75,7 +66,7 @@ class Server:
                                     t.send_message_to_client(str.strip(command))
                                 except socket.error, err:
                                     self.threads.remove(t)
-                                    print("client disconnected")
+                                    print("client disconnected -- 69")
                             else:
                                 self.threads.remove(t)
                 else:
@@ -95,14 +86,20 @@ class ServerClient(threading.Thread):
         self.size = 1024
 
     def run(self):
-        running = 1
+        running = True
+
         while running:
-            data = self.client.recv(self.size)
-            if data:
-                self.client.send(data)
-            else:
+            try:
+                data = self.client.recv(self.size)
+                if data:
+                    self.client.send(data)
+                else:
+                    self.client.close()
+                    running = 0
+            except socket.error, err:
                 self.client.close()
-                running = 0
+                running = False
+
 
     def send_message_to_client(self, message):
         self.client.send(message)
@@ -119,11 +116,11 @@ class ServerClient(threading.Thread):
 
 """ The class that runs on a client system."""
 class ClientServerListener(threading.Thread):
-    def __init__(self):
+    def __init__(self, server_addr):
         super(ClientServerListener, self).__init__()
         self.keep_running = True
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((host, port))
+        self.socket.connect((server_addr, PORT))
 
     def run(self):
         print("Server listener active:")
@@ -135,7 +132,7 @@ class ClientServerListener(threading.Thread):
 
                 ready = select.select([self.socket], [], [], 1)
                 if ready[0]:
-                    data = self.socket.recv(size)
+                    data = self.socket.recv(MAX_READ_SIZE)
 
                     sys.stdout.write("Received: %s\n" % data)
                     sys.stdout.flush()
@@ -150,11 +147,11 @@ class ClientServerListener(threading.Thread):
 
 
 class ClientKeyboardListener(threading.Thread):
-    def __init__(self):
+    def __init__(self, server_addr):
         super(ClientKeyboardListener, self).__init__()
         self.keep_running = True
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((host, port))
+        self.socket.connect((server_addr, PORT))
 
     def run(self):
         print("Keyboard listener active")
@@ -184,14 +181,15 @@ class ClientKeyboardListener(threading.Thread):
         self.socket.close()
 
 class Client():
-    def __init__(self):
+    def __init__(self, server_addr):
+        self.server_addr = server_addr
         pass
 
     def run(self):
-        csl = ClientServerListener()
+        csl = ClientServerListener(self.server_addr)
         csl.start()
 
-        ckl = ClientKeyboardListener()
+        ckl = ClientKeyboardListener(self.server_addr)
         ckl.start()
 
         # wait only for the keyboard listener to escape.
@@ -205,13 +203,20 @@ class Client():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--server', help='Starts the script in server mode.', default=False)
+    parser.add_argument('-s', '--server',
+                        help='Server mode.',
+                        action='store_true')
+    parser.add_argument('-c', '--client',
+                        metavar='SERVER_IP',
+                        help='Client mode. Connects to the server on the specified ip address.')
     args = parser.parse_args()
 
     # Run a server if the argument -s true or --server true
     if args.server:
         s = Server()
         s.run()
-    else:
-        c = Client()
+    elif args.client:
+        c = Client(args.client)
         c.run()
+    else:
+        parser.print_help()
