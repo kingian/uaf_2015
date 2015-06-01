@@ -5,6 +5,7 @@ import time
 import commands
 import json
 import pexpect
+import glob
 
 
 class CamControl:
@@ -39,14 +40,16 @@ class CamControl:
 
 	def cleanImg(self):
 		try:
-			subprocess.check_output(['rm', '*.tar.gz'])
+			rm_list = glob.glob('*.tar.gz')
+			for n in rmlist:
+				subprocess.check_output(['rm', n])
 		except:
 			return ("An exception occured, file cleaning failed.\n" + traceback.format_exc()) 			
 	
 	def moveImages(self):
 		try:
 			FILE = self.LOCAL_PATH + '/' +self.LOCAL_FILE 
-			COMMAND="scp -o PubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
+			COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 			child = pexpect.spawn(COMMAND)
 			child.expect('password:')
 			child.sendline(TARGET_PW)
