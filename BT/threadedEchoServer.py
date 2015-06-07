@@ -2,204 +2,152 @@
 import select
 import socket
 import sys
-import threading
-import thread
 import argparse
 
-PORT = 50003
 MAX_READ_SIZE = 1024
 
 """ The main server class. """
 class Server:
-    def __init__(self):
+    def __init__(self, port):
         self.backlog = 5
         self.server = None
-        self.threads = []
+        # self.threads = []
+        self.clients = [sys.stdin]
         self.serverRunning = True
-
-    def open_socket(self):
-        try:
-            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server.bind(('', PORT))
-            self.server.listen(self.backlog)
-        except socket.error, (value,message):
-            if self.server:
-                self.server.close()
-            print "Could not open socket: " + message
-            sys.exit(1)
+        self.host = ''
+        self.port = port
 
     def run(self):
-        self.open_socket()
-        inputs = [self.server, sys.stdin]
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.bind((self.host, self.port))
+        server_socket.listen(10)
+
+        # add server socket object to the list of readable connections
+        self.clients.append(server_socket)
+
+        print "Chat server started on port " + str(self.port)
 
         while self.serverRunning:
-            try:
-                input_ready, output_ready, except_ready = select.select(inputs, self.threads, [])
-            except select.error, err:
-                break
-            except socket.error, err:
-                for socket_output in output_ready:
-                    print("Client disconnected")
-                    socket_output.close()
-                break
 
-            for sock in input_ready:
-                if sock == self.server:
-                    # handle the server client socket
-                    client = ServerClient(self.server.accept())
-                    client.start()
-                    self.threads.append(client)
+            # get the list sockets which are ready to be read through select
+            # 4th arg, time_out  = 0 : poll and never block
+            ready_to_read, ready_to_write, in_error = select.select(self.clients, [], [])
 
-                elif sock == sys.stdin:
-                    # handle input from the console.
-                    command = sys.stdin.readline()
-                    if str.strip(command).startswith("::"):
-                        if str.strip(command).strip("::") == "quit":
-                            # close all threads
+            for sock in ready_to_read:
+                if sock == sys.stdin:
+                    # stdin so we received a message from the server console.
+                    data = sys.stdin.readline()
+                    if data.strip().startswith(":"):
+                        # Server command
+                        command = data.strip('\n').strip(':')
+                        if command == "quit":
+                            self.broadcast(server_socket, None, "Server shutting down.")
                             self.serverRunning = False
-                            continue
+                            for client in self.clients:
+                                client.close()
                     else:
-                        print("Sending message to all clients.")
-                        for t in self.threads:
-                            if t.is_alive:
-                                try:
-                                    t.send_message_to_client(str.strip(command))
-                                except socket.error, err:
-                                    self.threads.remove(t)
-                                    print("client disconnected -- 69")
-                            else:
-                                self.threads.remove(t)
+                        # Send server message to clients.
+                        self.broadcast(server_socket, None, '[SERVER] ' + data)
+
+                elif sock == server_socket:
+                    # a new connection request received
+                    sockfd, addr = server_socket.accept()
+                    self.clients.append(sockfd)
+                    print "Client (%s, %s) connected" % addr
+
+                    self.broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
+
                 else:
-                    print("Some message...")
+                    # a message from a client, not a new connection
+                    # process data received from client,
+                    try:
+                        # receiving data from the socket.
+                        data = sock.recv(MAX_READ_SIZE)
+                        if data:
+                            # there is something in the socket
+                            self.broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)
+                        else:
+                            # remove the socket that's broken
+                            if sock in self.clients:
+                                self.clients.remove(sock)
 
-        self.server.close()
-        for client in self.threads:
-            client.close()
-            client.join()
+                            # at this stage, no data means probably the connection has been broken
+                            self.broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
 
-""" A class that represents a client on the server. """
-class ServerClient(threading.Thread):
-    def __init__(self, (client, address)):
-        threading.Thread.__init__(self)
-        self.client = client
-        self.address = address
-        self.size = 1024
+                            # exception
+                    except socket.error, err:
+                        self.broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
+                        continue
 
-    def run(self):
-        running = True
+        server_socket.close()
 
-        while running:
-            try:
-                data = self.client.recv(self.size)
-                if data:
-                    self.client.send(data)
-                else:
-                    self.client.close()
-                    running = 0
-            except socket.error, err:
-                self.client.close()
-                running = False
+    # broadcast chat messages to all connected clients
+    def broadcast (self, server_socket, sock, message):
+        for client in self.clients:
+            # send the message only to peer
+            if client != server_socket and client != sock and client != sys.stdin:
+                try:
+                    client.send(message)
+                except socket.error, err:
+                    # broken socket connection
+                    client.close()
+                    # broken socket, remove it
+                    if client in self.clients:
+                        self.clients.remove(client)
 
-
-    def send_message_to_client(self, message):
-        self.client.send(message)
-
-    def close(self):
-        self.client.close()
-
-    def is_socket(self, sock):
-        return self.client == sock
-
-    def fileno(self):
-        return self.client.fileno()
-
-
-""" The class that runs on a client system."""
-class ClientServerListener(threading.Thread):
-    def __init__(self, server_addr):
-        super(ClientServerListener, self).__init__()
-        self.keep_running = True
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((server_addr, PORT))
-
-    def run(self):
-        print("Server listener active:")
-
-        while self.keep_running:
-            # check for more data receive queue.
-            try:
-                self.socket.setblocking(0)
-
-                ready = select.select([self.socket], [], [], 1)
-                if ready[0]:
-                    data = self.socket.recv(MAX_READ_SIZE)
-
-                    sys.stdout.write("Received: %s\n" % data)
-                    sys.stdout.flush()
-            except socket.error, err:
-                break
-            except select.error, err:
-                break
-
-    def stop(self):
-        self.keep_running = False
-        self.socket.close()
-
-
-class ClientKeyboardListener(threading.Thread):
-    def __init__(self, server_addr):
-        super(ClientKeyboardListener, self).__init__()
-        self.keep_running = True
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((server_addr, PORT))
-
-    def run(self):
-        print("Keyboard listener active")
-        try:
-            while self.keep_running:
-                sys.stdout.write('% ')
-
-                # read from keyboard
-                # may need to spawn this on a separate thread or have the listener on a separate thread. Right now it
-                # will only display the message AFTER keyboard input has been received. This won't be a big deal in the
-                # real client because there won't be keyboard input.
-                line = sys.stdin.readline()
-
-                # Exit client on an empty line entered.
-                if line == '\n':
-                    self.keep_running = False
-                    continue
-
-                    # send the data (message) from the command line.
-                self.socket.send(line)
-
-        except KeyboardInterrupt:
-            print("\nClosing the connection")
-
-    def stop(self):
-        self.keep_running = False
-        self.socket.close()
-
-class Client():
-    def __init__(self, server_addr):
+class Client:
+    def __init__(self, server_addr, port):
         self.server_addr = server_addr
+        self.server_port = port
+        self.running = True
         pass
 
     def run(self):
-        csl = ClientServerListener(self.server_addr)
-        csl.start()
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.settimeout(2)
 
-        ckl = ClientKeyboardListener(self.server_addr)
-        ckl.start()
+        # connect to remote host
+        try:
+            server_socket.connect((self.server_addr, self.server_port))
+        except socket.error, err:
+            print 'Unable to connect...'
+            sys.exit()
 
-        # wait only for the keyboard listener to escape.
-        ckl.join()
+        print 'Connected to server...'
+        sys.stdout.write('[Me] ')
+        sys.stdout.flush()
 
-        csl.stop()
-        ckl.stop()
+        while self.running:
+            socket_list = [sys.stdin, server_socket]
 
-        csl.join()
-        ckl.join()
+            # Get the list sockets which are readable
+            ready_to_read, ready_to_write, in_error = select.select(socket_list, [], [])
+
+            for sock in ready_to_read:
+                if sock == server_socket:
+                    # incoming message from remote server, s
+                    data = sock.recv(4096)
+                    if not data:
+                        print '\nDisconnected from chat server'
+                        sys.exit()
+                    else:
+                        # print data
+                        sys.stdout.write(data)
+                        sys.stdout.write('[Me] ')
+                        sys.stdout.flush()
+
+                else:
+                    # user entered a message
+                    msg = sys.stdin.readline()
+                    if msg == '':
+                        # Stop the client.
+                        self.running = False
+                        continue
+
+                    server_socket.send(msg)
+                    sys.stdout.write('[Me] ')
+                    sys.stdout.flush()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -209,14 +157,17 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--client',
                         metavar='SERVER_IP',
                         help='Client mode. Connects to the server on the specified ip address.')
+    parser.add_argument('-p', '--port',
+                        help='Server port number.',
+                        default=50000)
     args = parser.parse_args()
 
     # Run a server if the argument -s true or --server true
     if args.server:
-        s = Server()
+        s = Server(int(args.port))
         s.run()
     elif args.client:
-        c = Client(args.client)
+        c = Client(args.client, int(args.port))
         c.run()
     else:
         parser.print_help()
