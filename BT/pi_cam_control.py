@@ -42,7 +42,7 @@ class CamControl:
 		try:
 			rm_list = glob.glob('*.tar.gz')
 			for n in rmlist:
-				subprocess.check_output(['rm', n])
+				subprocess.check_output(['rm', n ])
 		except:
 			return ("An exception occured, file cleaning failed.\n" + traceback.format_exc()) 			
 	
