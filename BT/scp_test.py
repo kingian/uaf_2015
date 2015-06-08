@@ -1,7 +1,7 @@
 import subprocess
 
 
-def moveImages(self):
+def moveImages():
 #	try:
 		
 		COMMAND="scp ~/uaf_2015/BT/test.txt ubuntu@10.6.66.108:~/Documents/btimg"

@@ -14,7 +14,7 @@ class CamControl:
 	motion_pid = 0
 	REMOTE_USER = "ubuntu" 
 	TARGET_PW = "ubuntu"
-	HOST = "10.6.66.60"
+	HOST = "10.6.66.108"
 	REMOTE_PATH = ""
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
@@ -50,8 +50,9 @@ class CamControl:
 		try:
 			FILE = self.LOCAL_PATH + '/' + self.LOCAL_FILE 
 			COMMAND="scp %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
-			print (COMMAND)
-			subprocess.check_output(COMMAND)
+			TARGET = "%s@%s:%s" % (self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
+			print (COMMAND + '\n' + TARGET)
+			subprocess.call(['scp', FILE, TARGET])
 #			child = pexpect.spawn(COMMAND)
 #			child.expect(pexpect.EOF)
 #			print child.before
