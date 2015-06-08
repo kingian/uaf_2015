@@ -52,7 +52,7 @@ class CamControl:
 			COMMAND="scp %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 			TARGET = "%s@%s:%s" % (self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 			print (COMMAND + '\n' + TARGET)
-			subprocess.call(['scp', FILE, TARGET])
+			subprocess.check_output(['scp', FILE, TARGET])
 #			child = pexpect.spawn(COMMAND)
 #			child.expect(pexpect.EOF)
 #			print child.before
