@@ -14,7 +14,7 @@ class CamControl:
 	motion_pid = 0
 	REMOTE_USER = "ubuntu" 
 	TARGET_PW = "ubuntu"
-	HOST = "10.6.66.118"
+	HOST = "10.6.66.60"
 	REMOTE_PATH = ""
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
@@ -41,20 +41,20 @@ class CamControl:
 	def cleanImg(self):
 		try:
 			rm_list = glob.glob('*.tar.gz')
-			for n in rmlist:
+			for n in rm_list:
 				subprocess.check_output(['rm', n ])
 		except:
 			return ("An exception occured, file cleaning failed.\n" + traceback.format_exc()) 			
 	
 	def moveImages(self):
 		try:
-			FILE = self.LOCAL_PATH + '/' +self.LOCAL_FILE 
-			COMMAND="scp -oPubKeyAuthentication=no %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
-			child = pexpect.spawn(COMMAND)
-			child.expect('password:')
-			child.sendline(TARGET_PW)
-			child.expect(pexpect.EOF)
-			print child.before
+			FILE = self.LOCAL_PATH + '/' + self.LOCAL_FILE 
+			COMMAND="scp %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
+			print (COMMAND)
+			subprocess.check_output(COMMAND)
+#			child = pexpect.spawn(COMMAND)
+#			child.expect(pexpect.EOF)
+#			print child.before
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc())
 

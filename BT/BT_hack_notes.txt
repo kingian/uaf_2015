@@ -157,3 +157,5 @@ gateway 10.6.66.1
 
 Passwordless SCP link
 http://www.howtogeek.com/66776/how-to-remotely-copy-files-over-ssh-without-entering-your-password/
+
+Copy public RSA authorized_keys
