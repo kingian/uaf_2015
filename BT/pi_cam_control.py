@@ -34,7 +34,7 @@ class CamControl:
 	def compressDir(self):
 		try:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
-			subprocess.check_output(["tar", "-zcvf", "-C", self.LOCAL_FILE, self.MOTION_DIRECTORY,"picams"])
+			subprocess.check_output(["tar", "-zcvf", self.LOCAL_FILE, "-C", self.MOTION_DIRECTORY,"picams"])
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc()) 
 
