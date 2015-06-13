@@ -3,7 +3,7 @@ import select
 import socket
 import sys
 import argparse
-
+from pi_cam_control import *
 
 MAX_READ_SIZE = 1024
 
@@ -102,9 +102,11 @@ class Client:
         self.server_addr = server_addr
         self.server_port = port
         self.running = True
+		self.camCon = CamControl()
         pass
 
     def run(self):
+		
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.settimeout(2)
 
@@ -115,7 +117,20 @@ class Client:
             print 'Unable to connect...'
             sys.exit()
 
-        print 'Connected to server...'
+		print 'Connected to server...'
+			
+		# configure and start camera controler
+		try:
+			err = self.camCon.getConfig('config.json')
+			pids = self.camCom.startServices()
+			self.motionPid = pids[0]
+			self.cleanerPid = pids[1]
+		except:
+			print 'An error occured while starting camera controller..."
+			sys.exit()	
+			
+		print 'Camera controller started...'
+			
         sys.stdout.write('[Me] ')
         sys.stdout.flush()
 
@@ -151,7 +166,9 @@ class Client:
                     server_socket.send(msg)
                     sys.stdout.write('[Me] ')
                     sys.stdout.flush()
-
+					
+					
+# MAIN EXECUTION LOOP					
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--server',

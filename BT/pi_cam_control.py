@@ -14,12 +14,14 @@ class CamControl:
 	motion_pid = 0
 	REMOTE_USER = "ubuntu" 
 	TARGET_PW = "ubuntu"
-	HOST = "10.6.66.108"
+	HOST = "10.6.66.10"
 	REMOTE_PATH = ""
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
 	MOTION_DIRECTORY = "/tmp/motion"
-
+	
+	def __init__(self):
+		pass;
 
 	def getConfig(self,filename):
 		try:
@@ -34,7 +36,7 @@ class CamControl:
 	def compressDir(self):
 		try:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
-			subprocess.check_output(["tar", "-zcvf", self.LOCAL_FILE, "-C", self.MOTION_DIRECTORY])
+			subprocess.check_output(["tar", "-zcvf", self.LOCAL_FILE, self.MOTION_DIRECTORY])
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc()) 
 

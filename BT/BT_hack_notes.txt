@@ -161,3 +161,6 @@ Copy public RSA authorized_keys
 
 Changing hostname
 http://www.howtogeek.com/167195/how-to-change-your-raspberry-pi-or-other-linux-devices-hostname/
+
+Tar option specifics
+
