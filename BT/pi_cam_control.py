@@ -6,6 +6,7 @@ import commands
 import json
 import pexpect
 import glob
+import socket
 
 
 class CamControl:
@@ -19,8 +20,10 @@ class CamControl:
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
 	MOTION_DIRECTORY = "/tmp/motion"
+	HOSTNAME = ""
 	
 	def __init__(self):
+		HOSTNAME = socket.gethostname()
 		pass;
 
 	def getConfig(self,filename):
@@ -114,6 +117,37 @@ class CamControl:
 			subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
 		except:
 			return ("An error occured ending services.\n" + traceback.format_exc())
+
+		
+	def evalCommand(self,com):
+		if (com == 'stop'):
+			err = this.pauseServices()
+			msg = HOSTNAME + ': Paused Services\n' + err
+			return msg
+		elif (com=='start'):
+			err = this.resumeServices()
+			msg = HOSTNAME + ': Started Services\n' + err
+			return msg
+		elif (com == 'comp'):
+			err = this.compressDir()
+			msg = HOSTNAME + ': Compresed Motion Directory\n' + err
+			return msg
+		elif (com == 'send'):
+			err = this.moveImages()
+			msg = HOSTNAME + ': Tarball Sent\n' + err
+			return msg
+		elif (com == 'clean'):
+			err = this.cleanImg()
+			msg = HOSTNAME + ': Tarball Cleanded\n' + err
+			return msg
+		elif (com == 'end'):
+			err = this.endServices()
+			msg = HOSTNAME + ': Tarball Cleanded\n' + err
+			return msg		
+		else:
+			return (com + " is not a recognized command")
+		
+		
 
 	
 	def printMenu(self,message,error):
