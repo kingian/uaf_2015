@@ -13,7 +13,7 @@ class CamControl:
 
 	cleaner_pid = 0
 	motion_pid = 0
-	REMOTE_USER = "ubuntu" 
+	REMOTE_USER = "ubuntu"
 	TARGET_PW = "ubuntu"
 	HOST = "10.6.66.10"
 	REMOTE_PATH = ""
@@ -24,6 +24,7 @@ class CamControl:
 	
 	def __init__(self):
 		HOSTNAME = socket.gethostname()
+		self.cleaner = None
 		pass;
 
 	def getConfig(self,filename):
@@ -73,17 +74,18 @@ class CamControl:
 		except:
 			return ("An error occured making motion directories.\n" + traceback.format_exc())
 
-			
+
 	
 	def startServices(self):
 		err = self.makeDirectories()
 		self.motion_pid
 		self.cleaner_pid
 		try:
-			cleaner = subprocess.Popen(["./cleaner.sh", "&"])
+			# cleaner = subprocess.Popen(["./cleaner.sh", "&"])
+			self.startCleaner()
 			subprocess.call(["sudo", "service","motion", "start"])
 			time.sleep(0.05)
-			self.cleaner_pid = cleaner.pid
+			# self.cleaner_pid = cleaner.pid
 			self.motion_pid = int(subprocess.check_output(["pgrep","motion"]))
 #           DEBUGGING LINES
 #			print (subprocess.check_output(["pgrep","motion"]))
@@ -95,7 +97,8 @@ class CamControl:
 			return ("An exception occured, Motion and Cleaner didn't start.\n" + traceback.format_exc())
 
 	def startCleaner(self):
-		
+		self.cleaner = subprocess.Popen(["./cleaner.sh", "&"])
+		self.cleaner_pid = self.cleaner.pid
 		
 		
 	def pauseServices(self):
@@ -123,36 +126,35 @@ class CamControl:
 
 		
 	def evalCommand(self,com):
-		if (com == 'stop'):
-			err = this.pauseServices()
-			msg = HOSTNAME + ': Paused Services\n' + err
+		if com == 'stop':
+			err = self.pauseServices()
+			msg = self.HOSTNAME + ': Paused Services\n' + err
 			return msg
-		elif (com=='start'):
-			err = this.resumeServices()
-			msg = HOSTNAME + ': Started Services\n' + err
+		elif com=='start':
+			err = self.resumeServices()
+			msg = self.HOSTNAME + ': Started Services\n' + err
 			return msg
-		elif (com == 'comp'):
-			err = this.compressDir()
-			msg = HOSTNAME + ': Compresed Motion Directory\n' + err
+		elif com == 'comp':
+			err = self.compressDir()
+			msg = self.HOSTNAME + ': Compressed Motion Directory\n' + err
 			return msg
-		elif (com == 'send'):
-			err = this.moveImages()
-			msg = HOSTNAME + ': Tarball Sent\n' + err
+		elif com == 'send':
+			err = self.moveImages()
+			msg = self.HOSTNAME + ': Tarball Sent\n' + err
 			return msg
-		elif (com == 'clean'):
-			err = this.cleanImg()
-			msg = HOSTNAME + ': Tarball Cleanded\n' + err
+		elif com == 'clean':
+			err = self.cleanImg()
+			msg = self.HOSTNAME + ': Tarball Cleanded\n' + err
 			return msg
-		elif (com == 'end'):
-			err = this.endServices()
-			msg = HOSTNAME + ': Tarball Cleanded\n' + err
+		elif com == 'end':
+			err = self.endServices()
+			msg = self.HOSTNAME + ': Tarball Cleanded\n' + err
 			return msg		
 		else:
-			return (com + " is not a recognized command")
-		
-		
+			return com + " is not a recognized command"
 
-	
+
+
 	def printMenu(self,message,error):
 		subprocess.call("clear")
 		print (message)
