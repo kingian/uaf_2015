@@ -4,7 +4,6 @@ import subprocess
 import time
 import commands
 import json
-import pexpect
 import glob
 import socket
 
@@ -104,14 +103,15 @@ class CamControl:
 	def pauseServices(self):
 		try:
 			subprocess.check_output(["sudo","kill","-STOP","%d" % self.motion_pid])
-			subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
+			self.cleaner.terminate()
+			self.cleaner.wait()
 		except:
 			return ("An error occured pausing services.\n" + traceback.format_exc())
 	
 	
 	def resumeServices(self):
 		try:
-			subprocess.check_output(["kill","-CONT","%d" % self.cleaner_pid])
+			startCleaner()
 			subprocess.check_output(["sudo","kill","-CONT","%d" % self.motion_pid])
 		except:
 			return ("An error occured resuming services.\n" + traceback.format_exc())
@@ -120,7 +120,8 @@ class CamControl:
 	def endServices(self):
 		try:
 			subprocess.check_output(["sudo","kill","-9","%d" % self.motion_pid])
-			subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
+			self.cleaner.terminate()
+			self.cleaner.wait()
 		except:
 			return ("An error occured ending services.\n" + traceback.format_exc())
 
