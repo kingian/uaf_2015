@@ -111,7 +111,7 @@ class CamControl:
 	
 	def resumeServices(self):
 		try:
-			startCleaner()
+			self.startCleaner()
 			subprocess.check_output(["sudo","kill","-CONT","%d" % self.motion_pid])
 		except:
 			return ("An error occured resuming services.\n" + traceback.format_exc())
