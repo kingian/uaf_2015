@@ -39,7 +39,7 @@ class CamControl:
 	def compressDir(self):
 		try:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
-			subprocess.check_output(["tar", "-zcvf", self.LOCAL_FILE, self.MOTION_DIRECTORY])
+			subprocess.check_output(["tar", "-cvf", self.LOCAL_FILE, "-C", self.MOTION_DIRECTORY, "."])
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc()) 
 
@@ -94,11 +94,14 @@ class CamControl:
 		except Exception, err:
 			return ("An exception occured, Motion and Cleaner didn't start.\n" + traceback.format_exc())
 
+	def startCleaner(self):
+		
+		
 		
 	def pauseServices(self):
 		try:
 			subprocess.check_output(["sudo","kill","-STOP","%d" % self.motion_pid])
-			subprocess.check_output(["kill","-STOP","%d" % self.cleaner_pid])
+			subprocess.check_output(["kill","-9","%d" % self.cleaner_pid])
 		except:
 			return ("An error occured pausing services.\n" + traceback.format_exc())
 	
