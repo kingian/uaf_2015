@@ -50,7 +50,7 @@ class Server:
                                 client.close()
                     else:
                         # Send server message to clients.
-                        self.broadcast(server_socket, None, '[SERVER] ' + data)
+                        self.broadcast(server_socket, None, data)
 
                 elif sock == server_socket:
                     # a new connection request received
