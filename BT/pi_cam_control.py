@@ -19,7 +19,7 @@ class CamControl:
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
 	MOTION_DIRECTORY = "/tmp/motion"
-	HOSTNAME = ""
+	HOSTNAME = "default"
 	
 	def __init__(self):
 		HOSTNAME = socket.gethostname()
