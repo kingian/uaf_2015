@@ -149,11 +149,10 @@ class Client:
                         print '\nDisconnected from chat server'
                         sys.exit()
                     else:
-                        # print data
-						# put control harness here
+						msg = self.camCon.evalCommand(data.strip('\n'))
                         sys.stdout.write(data)
-                        sys.stdout.write('[Me] ')
                         sys.stdout.flush()
+						server_socket.send(msg)
 
                 else:
                     # user entered a message

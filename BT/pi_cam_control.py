@@ -39,7 +39,13 @@ class CamControl:
 	def compressDir(self):
 		try:
 			self.LOCAL_FILE = str(int(time.time())) + '.tar.gz'
-			subprocess.check_output(["tar", "-cvf", self.LOCAL_FILE, "-C", self.MOTION_DIRECTORY, "."])
+			comp = subprocess.Popen(["tar", "-cvf", self.LOCAL_FILE, "-C", self.MOTION_DIRECTORY, "."])
+			comp.wait()
+			TARGET = "%s@%s:%s" % (self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
+			send = subprocess.Popen(['scp', self.LOCAL_FILE, TARGET])
+			send.wait()
+			print ("Compress and send completed")
+			self.cleanImg()
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc()) 
 
@@ -57,7 +63,7 @@ class CamControl:
 			COMMAND="scp %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 			TARGET = "%s@%s:%s" % (self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 			print (COMMAND + '\n' + TARGET)
-			subprocess.check_output(['scp', FILE, TARGET])
+			subprocess.check_output(['scp', self.LOCAL_FILE, TARGET])
 #			child = pexpect.spawn(COMMAND)
 #			child.expect(pexpect.EOF)
 #			print child.before
@@ -120,8 +126,9 @@ class CamControl:
 	def endServices(self):
 		try:
 			subprocess.check_output(["sudo","kill","-9","%d" % self.motion_pid])
-			self.cleaner.terminate()
-			self.cleaner.wait()
+			if (!self.cleaner.poll())
+				self.cleaner.terminate()
+				self.cleaner.wait()
 		except:
 			return ("An error occured ending services.\n" + traceback.format_exc())
 
