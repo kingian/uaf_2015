@@ -150,6 +150,7 @@ class Client:
 					data = sock.recv(4096)
 					if not data:
 						print '\nDisconnected from chat server'
+						self.camCon.endServices();
 						sys.exit()
 					else:
 						print ("Incoming Data:" + data.strip('\n')
