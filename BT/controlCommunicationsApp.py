@@ -153,7 +153,7 @@ class Client:
 						self.camCon.endServices();
 						sys.exit()
 					else:
-						print ("Incoming Data:" + data.strip('\n')
+						print ("Incoming Data:" + data.strip('\n'))
 						msg = self.camCon.evalCommand(data.strip('\n'))
 						print msg
 						sys.stdout.write(data)
