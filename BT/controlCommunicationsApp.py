@@ -120,6 +120,7 @@ class Client:
 		print 'Connected to server...'
 			
 		# configure and start camera controler
+		err = ""
 		try:
 			err = self.camCon.getConfig('config.json')
 			pids = self.camCom.startServices()
@@ -127,6 +128,7 @@ class Client:
 			self.cleanerPid = pids[1]
 		except:
 			print 'An error occured while starting camera controller...'
+			print err
 			sys.exit()	
 			
 		print 'Camera controller started...'
