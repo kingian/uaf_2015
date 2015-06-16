@@ -14,7 +14,7 @@ class CamControl:
 	motion_pid = 0
 	REMOTE_USER = "ubuntu"
 	TARGET_PW = "ubuntu"
-	HOST = "10.6.66.10"
+	HOST = "10.6.66.108"
 	REMOTE_PATH = ""
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
@@ -83,7 +83,7 @@ class CamControl:
 
 	
 	def startServices(self):
-		HOSTNAME = socket.gethostname()
+		self.HOSTNAME = socket.gethostname()
 		err = self.makeDirectories()
 		self.motion_pid
 		self.cleaner_pid
