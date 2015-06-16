@@ -3,6 +3,7 @@ import select
 import socket
 import sys
 import argparse
+import traceback
 from pi_cam_control import *
 
 MAX_READ_SIZE = 1024
@@ -128,7 +129,7 @@ class Client:
 			self.cleanerPid = pids[1]
 		except:
 			print 'An error occured while starting camera controller...'
-			print err
+			print traceback.format_exc()
 			sys.exit()	
 			
 		print 'Camera controller started...'
