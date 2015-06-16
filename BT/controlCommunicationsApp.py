@@ -152,7 +152,9 @@ class Client:
 						print '\nDisconnected from chat server'
 						sys.exit()
 					else:
+						print ("Incoming Data:" + data.strip('\n')
 						msg = self.camCon.evalCommand(data.strip('\n'))
+						print msg
 						sys.stdout.write(data)
 						sys.stdout.flush()
 						server_socket.send(msg)
