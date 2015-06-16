@@ -44,7 +44,7 @@ class Server:
                         # Server command
                         command = data.strip('\n').strip(':')
                         if command == "quit":
-                            self.broadcast(server_socket, None, "Server shutting down.")
+                            self.broadcast(server_socket, None, "end")
                             self.serverRunning = False
                             for client in self.clients:
                                 client.close()
@@ -155,7 +155,6 @@ class Client:
 					else:
 						print ("Incoming Data:" + data.strip('\n'))
 						msg = self.camCon.evalCommand(data.strip('\n'))
-						print msg
 						sys.stdout.write(data)
 						sys.stdout.flush()
 						server_socket.send(msg)

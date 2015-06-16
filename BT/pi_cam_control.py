@@ -21,8 +21,9 @@ class CamControl:
 	MOTION_DIRECTORY = "/tmp/motion"
 	HOSTNAME = "default"
 	
+	
+	
 	def __init__(self):
-		HOSTNAME = socket.gethostname()
 		self.cleaner = None
 		pass;
 
@@ -82,6 +83,7 @@ class CamControl:
 
 	
 	def startServices(self):
+		HOSTNAME = socket.gethostname()
 		err = self.makeDirectories()
 		self.motion_pid
 		self.cleaner_pid
