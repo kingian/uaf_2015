@@ -126,7 +126,7 @@ class CamControl:
 	def endServices(self):
 		try:
 			subprocess.check_output(["sudo","kill","-9","%d" % self.motion_pid])
-			if (!self.cleaner.poll())
+			if (not(self.cleaner.poll())):
 				self.cleaner.terminate()
 				self.cleaner.wait()
 		except:

@@ -99,24 +99,24 @@ class Server:
 
 class Client:
     def __init__(self, server_addr, port):
-        self.server_addr = server_addr
-        self.server_port = port
-        self.running = True
+		self.server_addr = server_addr
+		self.server_port = port
+		self.running = True
 		self.camCon = CamControl()
-        pass
+		pass
 
     def run(self):
 		
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.settimeout(2)
+		server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		server_socket.settimeout(2)
 
-        # connect to remote host
-        try:
-            server_socket.connect((self.server_addr, self.server_port))
-        except socket.error, err:
-            print 'Unable to connect...'
-            sys.exit()
-
+		# connect to remote host
+		try:
+			server_socket.connect((self.server_addr, self.server_port))
+		except socket.error, err:
+			print 'Unable to connect...'
+			sys.exit()
+			
 		print 'Connected to server...'
 			
 		# configure and start camera controler
@@ -126,45 +126,45 @@ class Client:
 			self.motionPid = pids[0]
 			self.cleanerPid = pids[1]
 		except:
-			print 'An error occured while starting camera controller..."
+			print 'An error occured while starting camera controller...'
 			sys.exit()	
 			
 		print 'Camera controller started...'
 			
-        sys.stdout.write('[Me] ')
-        sys.stdout.flush()
+		sys.stdout.write('[Me] ')
+		sys.stdout.flush()
 
-        while self.running:
-            socket_list = [sys.stdin, server_socket]
+		while self.running:
+			socket_list = [sys.stdin, server_socket]
 
-            # Get the list sockets which are readable
-            ready_to_read, ready_to_write, in_error = select.select(socket_list, [], [])
+			# Get the list sockets which are readable
+			ready_to_read, ready_to_write, in_error = select.select(socket_list, [], [])
 
-            for sock in ready_to_read:
+			for sock in ready_to_read:
 				# Remove if & else block
-                if sock == server_socket:
-                    # incoming message from remote server, s
-                    data = sock.recv(4096)
-                    if not data:
-                        print '\nDisconnected from chat server'
-                        sys.exit()
-                    else:
+				if sock == server_socket:
+					# incoming message from remote server, s
+					data = sock.recv(4096)
+					if not data:
+						print '\nDisconnected from chat server'
+						sys.exit()
+					else:
 						msg = self.camCon.evalCommand(data.strip('\n'))
-                        sys.stdout.write(data)
-                        sys.stdout.flush()
+						sys.stdout.write(data)
+						sys.stdout.flush()
 						server_socket.send(msg)
 
-                else:
-                    # user entered a message
-                    msg = sys.stdin.readline()
-                    if msg == '':
-                        # Stop the client.
-                        self.running = False
-                        continue
+				else:
+					# user entered a message
+					msg = sys.stdin.readline()
+					if msg == '':
+						# Stop the client.
+						self.running = False
+						continue
 
-                    server_socket.send(msg)
-                    sys.stdout.write('[Me] ')
-                    sys.stdout.flush()
+					server_socket.send(msg)
+					sys.stdout.write('[Me] ')
+					sys.stdout.flush()
 					
 					
 # MAIN EXECUTION LOOP					
