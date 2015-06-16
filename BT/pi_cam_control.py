@@ -136,27 +136,27 @@ class CamControl:
 	def evalCommand(self,com):
 		if com == 'stop':
 			err = self.pauseServices()
-			msg = self.HOSTNAME + ': Paused Services\n' + err
+			msg = self.HOSTNAME + ': Paused Services\n' + str(err)
 			return msg
 		elif com=='start':
 			err = self.resumeServices()
-			msg = self.HOSTNAME + ': Started Services\n' + err
+			msg = self.HOSTNAME + ': Started Services\n' + str(err)
 			return msg
 		elif com == 'comp':
 			err = self.compressDir()
-			msg = self.HOSTNAME + ': Compressed Motion Directory\n' + err
+			msg = self.HOSTNAME + ': Compressed Motion Directory\n' + str(err)
 			return msg
 		elif com == 'send':
 			err = self.moveImages()
-			msg = self.HOSTNAME + ': Tarball Sent\n' + err
+			msg = self.HOSTNAME + ': Tarball Sent\n' + str(err)
 			return msg
 		elif com == 'clean':
 			err = self.cleanImg()
-			msg = self.HOSTNAME + ': Tarball Cleanded\n' + err
+			msg = self.HOSTNAME + ': Tarball Cleanded\n' + str(err)
 			return msg
 		elif com == 'end':
 			err = self.endServices()
-			msg = self.HOSTNAME + ': Tarball Cleanded\n' + err
+			msg = self.HOSTNAME + ': Tarball Cleanded\n' + str(err)
 			return msg		
 		else:
 			return com + " is not a recognized command"
