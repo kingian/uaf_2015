@@ -124,7 +124,7 @@ class Client:
 		err = ""
 		try:
 			err = self.camCon.getConfig('config.json')
-			pids = self.camCom.startServices()
+			pids = self.camCon.startServices()
 			self.motionPid = pids[0]
 			self.cleanerPid = pids[1]
 		except:
