@@ -68,7 +68,7 @@ class Server:
                         data = sock.recv(MAX_READ_SIZE)
                         if data:
                             # there is something in the socket
-							sys.stdout.write(data.strip('\n'))
+							print(data.strip('\n'))
 							self.broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)
                         else:
                             # remove the socket that's broken
