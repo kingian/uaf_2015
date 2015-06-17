@@ -136,27 +136,45 @@ class CamControl:
 	def evalCommand(self,com):
 		if com == 'stop':
 			err = self.pauseServices()
-			msg = self.HOSTNAME + ': Paused Services\n' + str(err)
+			if (err != None):
+				msg = self.HOSTNAME + ':paused##' + str(err)
+			else
+				msg = self.HOSTNAME + ':paused\n'
 			return msg
 		elif com=='start':
 			err = self.resumeServices()
-			msg = self.HOSTNAME + ': Started Services\n' + str(err)
+			if (err != None):
+				msg = self.HOSTNAME + ':started##' + str(err)
+			else:
+				msg = self.HOSTNAME + ':started\n'
 			return msg
 		elif com == 'comp':
 			err = self.compressDir()
-			msg = self.HOSTNAME + ': Compressed Motion Directory\n' + str(err)
+			if (err != None):
+				msg = self.HOSTNAME + ':compressed##' + str(err)
+			else:
+				msg = self.HOSTNAME + ':compressed\n'
 			return msg
 		elif com == 'send':
 			err = self.moveImages()
-			msg = self.HOSTNAME + ': Tarball Sent\n' + str(err)
+			if (err != None):
+				msg = self.HOSTNAME + ':sent##' + str(err)
+			else:
+				msg = self.HOSTNAME + ':sent\n'
 			return msg
 		elif com == 'clean':
 			err = self.cleanImg()
-			msg = self.HOSTNAME + ': Tarball Cleanded\n' + str(err)
+			if (err != None):
+				msg = self.HOSTNAME + ':cleaned##' + str(err)
+			else:
+				msg = self.HOSTNAME + ':cleaned\n'
 			return msg
-		elif com == 'end':
+		elif com == 'end':	
 			err = self.endServices()
-			msg = self.HOSTNAME + ': Tarball Cleanded\n' + str(err)
+			if (err != None):
+				msg = self.HOSTNAME + ':ended##' + str(err)
+			else:
+				msg = self.HOSTNAME + ':ended\n'			
 			return msg		
 		else:
 			return com + " is not a recognized command"
