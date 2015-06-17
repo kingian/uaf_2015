@@ -43,10 +43,7 @@ class CamControl:
 			comp = subprocess.Popen(["tar", "-cvf", self.LOCAL_FILE, "-C", self.MOTION_DIRECTORY, "."])
 			comp.wait()
 			TARGET = "%s@%s:%s" % (self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
-			send = subprocess.Popen(['scp', self.LOCAL_FILE, TARGET])
-			send.wait()
-			print ("Compress and send completed")
-			self.cleanImg()
+			print ("Images compressed into tarball.")
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc()) 
 
@@ -60,11 +57,12 @@ class CamControl:
 	
 	def moveImages(self):
 		try:
-			FILE = self.LOCAL_PATH + '/' + self.LOCAL_FILE 
-			COMMAND="scp %s %s@%s:%s" % (FILE, self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
+
 			TARGET = "%s@%s:%s" % (self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
-			print (COMMAND + '\n' + TARGET)
-			subprocess.check_output(['scp', self.LOCAL_FILE, TARGET])
+			send = subprocess.Popen(['scp', self.LOCAL_FILE, TARGET])
+			send.wait()
+			print ("Tarball sent and cleaned")
+			self.cleanImg()
 #			child = pexpect.spawn(COMMAND)
 #			child.expect(pexpect.EOF)
 #			print child.before
