@@ -138,7 +138,7 @@ class CamControl:
 			err = self.pauseServices()
 			if (err != None):
 				msg = self.HOSTNAME + ':paused##' + str(err)
-			else
+			else:
 				msg = self.HOSTNAME + ':paused\n'
 			return msg
 		elif com=='start':
