@@ -69,7 +69,8 @@ class Server:
                         if data:
                             # there is something in the socket
 							print(data.strip('\n'))
-							self.broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)
+							# Removes echo broadcast
+#							self.broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)
                         else:
                             # remove the socket that's broken
                             if sock in self.clients:

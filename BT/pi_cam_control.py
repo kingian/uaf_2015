@@ -14,7 +14,7 @@ class CamControl:
 	motion_pid = 0
 	REMOTE_USER = "ubuntu"
 	TARGET_PW = "ubuntu"
-	HOST = "10.6.66.108"
+	HOST = "10.6.66.10"
 	REMOTE_PATH = ""
 	LOCAL_PATH = ""
 	LOCAL_FILE = ""
