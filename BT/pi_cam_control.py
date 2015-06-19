@@ -20,9 +20,9 @@ class CamControl:
 	LOCAL_FILE = ""
 	MOTION_DIRECTORY = "/tmp/motion"
 	HOSTNAME = "default"
-	
-	
-	
+	SUCCESS_VALUE = 0
+
+
 	def __init__(self):
 		self.cleaner = None
 		pass;
@@ -33,6 +33,7 @@ class CamControl:
 			configurations = json.load(confile)
 			self.LOCAL_PATH = configurations['LOCAL']
 			self.REMOTE_PATH = configurations['REMOTE']
+			return self.SUCCESS_VALUE
 		except:
 			return ("An error occured reading the configuration file.\n" + traceback.format_exc())
 			
@@ -44,6 +45,7 @@ class CamControl:
 			comp.wait()
 			TARGET = "%s@%s:%s" % (self.REMOTE_USER, self.HOST, self.REMOTE_PATH)
 			print ("Images compressed into tarball.")
+			return self.SUCCESS_VALUE
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc()) 
 
@@ -52,6 +54,7 @@ class CamControl:
 			rm_list = glob.glob('*.tar.gz')
 			for n in rm_list:
 				subprocess.check_output(['rm', n ])
+			return self.SUCCESS_VALUE
 		except:
 			return ("An exception occured, file cleaning failed.\n" + traceback.format_exc()) 			
 	
@@ -66,6 +69,7 @@ class CamControl:
 #			child = pexpect.spawn(COMMAND)
 #			child.expect(pexpect.EOF)
 #			print child.before
+			return self.SUCCESS_VALUE
 		except:
 			return ("An error occured compressing the motion folder.\n" + traceback.format_exc())
 
@@ -75,6 +79,7 @@ class CamControl:
 			subprocess.call(["sudo", "mkdir","/tmp/motion/cam1"])
 			subprocess.call(["sudo", "mkdir","/tmp/motion/cam2"])
 			subprocess.call(["sudo", "mkdir","/tmp/motion/cam3"])
+			return self.SUCCESS_VALUE
 		except:
 			return ("An error occured making motion directories.\n" + traceback.format_exc())
 
@@ -104,6 +109,7 @@ class CamControl:
 	def startCleaner(self):
 		self.cleaner = subprocess.Popen(["./cleaner.sh", "&"])
 		self.cleaner_pid = self.cleaner.pid
+		return self.SUCCESS_VALUE
 		
 		
 	def pauseServices(self):
@@ -111,6 +117,7 @@ class CamControl:
 			subprocess.check_output(["sudo","kill","-STOP","%d" % self.motion_pid])
 			self.cleaner.terminate()
 			self.cleaner.wait()
+			return self.SUCCESS_VALUE
 		except:
 			return ("An error occured pausing services.\n" + traceback.format_exc())
 	
@@ -119,6 +126,7 @@ class CamControl:
 		try:
 			self.startCleaner()
 			subprocess.check_output(["sudo","kill","-CONT","%d" % self.motion_pid])
+			return self.SUCCESS_VALUE
 		except:
 			return ("An error occured resuming services.\n" + traceback.format_exc())
 
@@ -129,6 +137,7 @@ class CamControl:
 			if (not(self.cleaner.poll())):
 				self.cleaner.terminate()
 				self.cleaner.wait()
+			return self.SUCCESS_VALUE
 		except:
 			return ("An error occured ending services.\n" + traceback.format_exc())
 
