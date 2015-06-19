@@ -163,10 +163,11 @@ class Client:
                         else:
                             print ("Incoming Data:" + data.strip('\n'))
                             msg = self.camCon.evalCommand(data.strip('\n'))
-                            print msg
+                            print("MESSAGE FROM EVAL: %s" % msg)
                             sys.stdout.write(data)
                             sys.stdout.flush()
-                            self.server_socket.send(msg)
+                            if msg is not None:
+                                self.server_socket.send(msg)
 
                     else:
                         # user entered a message

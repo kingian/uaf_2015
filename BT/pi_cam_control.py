@@ -152,10 +152,11 @@ class CamControl:
 			else:
 				com = tmp[1]
 		except:
-			pass
+			print("Failed to split argument to see if we are the sender.")
 		
 		
 		if com == 'stop':
+			print("COMMAND: stop")
 			err = self.pauseServices()
 			if (err != None):
 				msg = self.HOSTNAME + ':paused##' + str(err)
@@ -163,6 +164,7 @@ class CamControl:
 				msg = self.HOSTNAME + ':paused\n'
 			return msg
 		elif com=='start':
+			print("COMMAND: start")
 			err = self.resumeServices()
 			if (err != None):
 				msg = self.HOSTNAME + ':started##' + str(err)
@@ -170,6 +172,7 @@ class CamControl:
 				msg = self.HOSTNAME + ':started\n'
 			return msg
 		elif com == 'comp':
+			print("COMMAND: comp")
 			err = self.compressDir()
 			if (err != None):
 				msg = self.HOSTNAME + ':compressed##' + str(err)
@@ -177,6 +180,7 @@ class CamControl:
 				msg = self.HOSTNAME + ':compressed\n'
 			return msg
 		elif com == 'send':
+			print("COMMAND: send")
 			err = self.moveImages()
 			if (err != None):
 				msg = self.HOSTNAME + ':sent##' + str(err)
@@ -184,13 +188,15 @@ class CamControl:
 				msg = self.HOSTNAME + ':sent\n'
 			return msg
 		elif com == 'clean':
+			print("COMMAND: clean")
 			err = self.cleanImg()
 			if (err != None):
 				msg = self.HOSTNAME + ':cleaned##' + str(err)
 			else:
 				msg = self.HOSTNAME + ':cleaned\n'
 			return msg
-		elif com == 'end':	
+		elif com == 'end':
+			print("COMMAND: end")
 			err = self.endServices()
 			if (err != None):
 				msg = self.HOSTNAME + ':ended##' + str(err)
