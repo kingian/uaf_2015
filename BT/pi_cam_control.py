@@ -134,6 +134,18 @@ class CamControl:
 
 		
 	def evalCommand(self,com):
+	# If the command is for a specific controller check_output
+	# to see if the check to see if its for the this one.
+		try:
+			tmp = com.split(':')
+			if(tmp[0]!=self.HOSTNAME):
+				return
+			else:
+				com = tmp[1]
+		except:
+			pass
+		
+		
 		if com == 'stop':
 			err = self.pauseServices()
 			if (err != None):
