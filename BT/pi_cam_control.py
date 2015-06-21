@@ -155,9 +155,11 @@ class CamControl:
 				else:
 					com = tmp[1]				
 			except:
-				
-		print 'BLAH 2: '
-		
+				pass
+			print 'BLAH 2: '
+			
+			
+
 		if com == 'stop':
 			print("COMMAND: stop")
 			err = self.pauseServices()
