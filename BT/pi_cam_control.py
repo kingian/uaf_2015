@@ -147,6 +147,7 @@ class CamControl:
 	# to see if the check to see if its for the this one.
 		print 'BLAH 1: ' + com 
 		if ((com.find('pi')>-1) and (com.find(':')>-1)):
+			print ('BLAH conditional')
 			try:
 				tmp = com.split(':')
 				if(tmp[0]!=self.HOSTNAME):
@@ -154,8 +155,6 @@ class CamControl:
 				else:
 					com = tmp[1]				
 			except:
-				
-			print 'BLAH conditional'
 				
 		print 'BLAH 2: '
 		
