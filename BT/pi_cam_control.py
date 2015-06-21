@@ -146,7 +146,7 @@ class CamControl:
 	# If the command is for a specific controller check_output
 	# to see if the check to see if its for the this one.
 		print 'BLAH 1: ' + com 
-		if ((com.find(':')>0) and (com.find('pi'))):
+		if ((com.find('pi')>-1) and (com.find(':')>-1)):
 			print 'BLAH conditional'
 		
 		
