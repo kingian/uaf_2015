@@ -154,19 +154,9 @@ class CamControl:
 				else:
 					com = tmp[1]				
 			except:
-			
+				
 			print 'BLAH conditional'
-		
-		
-#		try:
-#			tmp = com.split(':')
-#			if(tmp[0]!=self.HOSTNAME):
-#				return
-#			else:
-#				com = tmp[1]
-#		except:
-#			print("Failed to split argument to see if we are the sender.")
-		
+				
 		print 'BLAH 2: '
 		
 		if com == 'stop':
