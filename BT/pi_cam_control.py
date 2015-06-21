@@ -145,8 +145,8 @@ class CamControl:
 	def evalCommand(self,com):
 	# If the command is for a specific controller check_output
 	# to see if the check to see if its for the this one.
-		print 'BLAH 1: ' + com + '\n'
-		if com.find(':')>0:
+		print 'BLAH 1: ' + com 
+		if ((com.find(':')>0) and (com.find('pi'))):
 			print 'BLAH conditional'
 		
 		
