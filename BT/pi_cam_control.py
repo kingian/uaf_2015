@@ -6,6 +6,9 @@ import commands
 import json
 import glob
 import socket
+from enum import *
+
+camConStates = Enum(['active','paused','compressed','sent'])
 
 
 class CamControl:
@@ -25,6 +28,7 @@ class CamControl:
 
 	def __init__(self):
 		self.cleaner = None
+		self.conState = camConStates.paused
 		pass;
 
 	def getConfig(self,filename):
@@ -101,6 +105,7 @@ class CamControl:
 #			print (subprocess.check_output(["pgrep","motion"]))
 #			print ("Motion PID:%d" % self.motion_pid)
 #			print ("Cleaner PID:%d" % self.cleaner_pid)
+			conState = camConStates.active
 			print ("Motion and Cleaner services sucessfully started.\n")
 			return [self.motion_pid,self.cleaner_pid]
 		except Exception, err:
@@ -161,36 +166,52 @@ class CamControl:
 			
 
 		if com == 'stop':
+			if self.conState == camConStates.paused:
+				print ('Already stopped')
+				return
 			print("COMMAND: stop")
 			err = self.pauseServices()
 			if (err != None):
 				msg = self.HOSTNAME + ':paused##' + str(err)
 			else:
 				msg = self.HOSTNAME + ':paused\n'
+			self.conState = camConStates.paused
 			return msg
 		elif com=='start':
+			if self.conState == camConStates.active:
+				print ('Already started')
+				return
 			print("COMMAND: start")
 			err = self.resumeServices()
 			if (err != None):
 				msg = self.HOSTNAME + ':started##' + str(err)
 			else:
 				msg = self.HOSTNAME + ':started\n'
+			self.conState = camConStates.active
 			return msg
 		elif com == 'comp':
+			if self.conState == camConStates.compressed:
+				print ('Already compressed')
+				return
 			print("COMMAND: comp")
 			err = self.compressDir()
 			if (err != None):
 				msg = self.HOSTNAME + ':compressed##' + str(err)
 			else:
 				msg = self.HOSTNAME + ':compressed\n'
+			self.conState = camConStates.compressed
 			return msg
 		elif com == 'send':
+			if self.conState == camConStates.sent:
+				print ('Already sent')
+				return			
 			print("COMMAND: send")
 			err = self.moveImages()
 			if (err != None):
 				msg = self.HOSTNAME + ':sent##' + str(err)
 			else:
 				msg = self.HOSTNAME + ':sent\n'
+			self.conState = camConStates.sent
 			return msg
 		elif com == 'clean':
 			print("COMMAND: clean")
