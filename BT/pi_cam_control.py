@@ -146,14 +146,14 @@ class CamControl:
 	# If the command is for a specific controller check_output
 	# to see if the check to see if its for the this one.
 		print 'BLAH 1: ' + com + '\n'
-		try:
-			tmp = com.split(':')
-			if(tmp[0]!=self.HOSTNAME):
-				return
-			else:
-				com = tmp[1]
-		except:
-			print("Failed to split argument to see if we are the sender.")
+#		try:
+#			tmp = com.split(':')
+#			if(tmp[0]!=self.HOSTNAME):
+#				return
+#			else:
+#				com = tmp[1]
+#		except:
+#			print("Failed to split argument to see if we are the sender.")
 		
 		print 'BLAH 2: '
 		
