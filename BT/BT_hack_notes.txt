@@ -148,6 +148,7 @@ ifconfig eth0 XXX.XXX.XXX.XXX netmask 255.255.255.0 up
 
 http://www.modmypi.com/blog/tutorial-how-to-give-your-raspberry-pi-a-static-ip-address
 
+iface eth0 inet static
 address 10.6.66.61
 netmask 255.255.255.0
 network 10.6.66.0

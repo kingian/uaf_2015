@@ -145,6 +145,7 @@ class CamControl:
 	def evalCommand(self,com):
 	# If the command is for a specific controller check_output
 	# to see if the check to see if its for the this one.
+		print 'BLAH 1: ' + com + '\n'
 		try:
 			tmp = com.split(':')
 			if(tmp[0]!=self.HOSTNAME):
@@ -154,6 +155,7 @@ class CamControl:
 		except:
 			print("Failed to split argument to see if we are the sender.")
 		
+		print 'BLAH 2: '
 		
 		if com == 'stop':
 			print("COMMAND: stop")
