@@ -28,7 +28,6 @@ class CamControl:
 
 	def __init__(self):
 		self.cleaner = None
-		self.conState = camConStates.paused
 		pass;
 
 	def getConfig(self,filename):
