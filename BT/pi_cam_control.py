@@ -161,7 +161,7 @@ class CamControl:
 					com = tmp[1]				
 			except:
 				pass
-			print 'BLAH 2: '
+			print 'BLAH 2: ' + self.conState
 			
 			
 
