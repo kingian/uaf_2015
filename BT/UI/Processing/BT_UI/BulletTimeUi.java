@@ -11,8 +11,11 @@ public class BulletTimeUi
 	ControlButton _playButton;
 	ControlButton _btButton;
 	ControlButton _exportButton;
+	ControlButton _sendEmailButton;
 	ImageViewer _viewer;
+	InputField _emailAddressInput;
 
+	boolean _hasExported = false;
 
 	public void setup(PApplet applet)
 	{
@@ -30,7 +33,7 @@ public class BulletTimeUi
 
 		_playButton = new ControlButton(
 				_p,
-				_p.width * 0.5f, _p.height * 0.9f,
+				_p.width * 0.5f, _p.height * 0.91f,
 				_p.height * 0.1f, _p.height * 0.1f,
 				ControlButton.ButtonType.Play);
 		_playButton.setOnClicked(new ControlButton.OnClickListener()
@@ -93,10 +96,42 @@ public class BulletTimeUi
 				}
 			}
 		});
+
+		_sendEmailButton = new ControlButton(
+				_p,
+				_p.width*0.025f, _p.height*0.86f + btButtonHeight + _p.height*0.02f,
+				btButtonWidth, btButtonHeight,
+				ControlButton.ButtonType.Button);
+		_sendEmailButton.setText("Email Gif");
+		_sendEmailButton.setOnClicked(new ControlButton.OnClickListener()
+		{
+			@Override
+			public void onClick()
+			{
+				// Ignore clicks if an image hasn't been exported.
+				if(!_hasExported)
+				{
+					try
+					{
+						Emailer.sendEmail(_emailAddressInput.getInput(), _p.sketchPath(_viewer.getOutputPath()));
+					}
+					catch(RuntimeException ex)
+					{
+						System.out.println("Failed to send the email.");
+					}
+				}
+			}
+		});
+
+		_emailAddressInput = new InputField(
+				_p,
+				_p.width*0.575f, _p.height*0.86f + btButtonHeight + _p.height*0.02f,
+				btButtonWidth, btButtonHeight);
 	}
 
 	public void draw()
 	{
-
+		_p.fill(220.0f, 220.0f, 220.0f);
+		_p.rect(0.0f, 0.0f, _p.width, _p.height);
 	}
 }

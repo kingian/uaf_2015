@@ -26,6 +26,8 @@ public class ImageViewer
 	private static final String PI_FOLDER_PREFIX = "pi";
 	private static final String CAM_FOLDER_PREFIX = "cam";
 
+	private String _outputPath = "out.gif";
+
 	private PApplet _p;
 	private String _rootPath;
 	private ImageViewerState _state = ImageViewerState.Stopped;
@@ -163,9 +165,14 @@ public class ImageViewer
 	{
 		resetCameraState();
 
-		_outGif = new GifMaker(_p, "out.gif");
+		_outGif = new GifMaker(_p, _outputPath);
 		_outGif.setRepeat(0);
 		_state = ImageViewerState.Exporting;
+	}
+
+	public String getOutputPath()
+	{
+		return _outputPath;
 	}
 
 	private void resetCameraState()
