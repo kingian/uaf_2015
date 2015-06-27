@@ -60,7 +60,10 @@ public class ImageViewer
 		_width = width;
 		_height = height;
 
-		findFiles(rootImagePath);
+		if(rootImagePath != null)
+		{
+			findFiles(rootImagePath);
+		}
 	}
 
 	private void findFiles(String rootImagePath)
@@ -68,7 +71,7 @@ public class ImageViewer
 		_rootPath = rootImagePath;
 
 		// find all the pi folders in the root path.
-		File f = new File(_p.sketchPath(_rootPath));
+		File f = new File(_rootPath);
 		File[] foldersPi = f.listFiles(new FileFilter()
 		{
 			@Override
@@ -136,6 +139,17 @@ public class ImageViewer
 		}
 	}
 
+	public void setRootPath(String rootPath)
+	{
+		_rootPath = rootPath;
+		findFiles(_rootPath);
+	}
+
+	public String getRootPath()
+	{
+		return _rootPath;
+	}
+
 	public String getCurrentImagePath()
 	{
 		return _imageFiles.get(_activeVirtualCamera)[_currentFrame].getAbsolutePath();
@@ -183,6 +197,13 @@ public class ImageViewer
 
 	public void draw()
 	{
+		if(_rootPath == null || _imageFiles.size() == 0)
+		{
+			_p.fill(355, 0, 0);
+			_p.rect(_center.getX() - _width * 0.5f, _center.getY() - _height * 0.5f, _width, _height);
+			return;
+		}
+
 		// Load the current file. (I know this is slow... but it works alright.)
 		PImage img = _p.loadImage(getCurrentImagePath());
 		float ratio = ((float) img.width) / img.height;

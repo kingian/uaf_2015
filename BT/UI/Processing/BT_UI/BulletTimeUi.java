@@ -1,5 +1,7 @@
 import processing.core.PApplet;
 
+import java.io.File;
+
 /**
  * Created by davidkemker on 6/20/15.
  */
@@ -12,6 +14,7 @@ public class BulletTimeUi
 	ControlButton _btButton;
 	ControlButton _exportButton;
 	ControlButton _sendEmailButton;
+	ControlButton _setFolderButton;
 	ImageViewer _viewer;
 	InputField _emailAddressInput;
 
@@ -25,9 +28,11 @@ public class BulletTimeUi
 		_p.frameRate(24.0f);
 		_p.size(800, 800);
 
+		browseForRootPath();
+
 		_viewer = new ImageViewer(
 				_p,
-				ROOT_IMAGE_FOLDER,
+				null,
 				_p.width * 0.5f, _p.height * 0.5f,
 				_p.height - 10.0f, _p.height - 10.0f);
 
@@ -114,11 +119,27 @@ public class BulletTimeUi
 					try
 					{
 						Emailer.sendEmail(_emailAddressInput.getInput(), _p.sketchPath(_viewer.getOutputPath()));
-					}
-					catch(RuntimeException ex)
+					} catch(RuntimeException ex)
 					{
 						System.out.println("Failed to send the email.");
 					}
+				}
+			}
+		});
+
+		_setFolderButton = new ControlButton(
+				_p,
+				_p.width*0.025f, _p.height*0.91f + btButtonHeight + _p.height*0.02f,
+				_p.width*0.025f, _p.width*0.025f,
+				ControlButton.ButtonType.Button);
+		_setFolderButton.setOnClicked(new ControlButton.OnClickListener()
+		{
+			@Override
+			public void onClick()
+			{
+				if(_viewer.getState().equals(ImageViewer.ImageViewerState.Stopped))
+				{
+					browseForRootPath();
 				}
 			}
 		});
@@ -127,6 +148,20 @@ public class BulletTimeUi
 				_p,
 				_p.width*0.575f, _p.height*0.86f + btButtonHeight + _p.height*0.02f,
 				btButtonWidth, btButtonHeight);
+	}
+
+	private void browseForRootPath()
+	{
+		_p.selectFolder(
+				"Please select the root folder where the BT images are located",
+				"folderSelected",
+				null,
+				this);
+	}
+
+	public void folderSelected(File selection)
+	{
+		_viewer.setRootPath(selection.getAbsolutePath());
 	}
 
 	public void draw()
