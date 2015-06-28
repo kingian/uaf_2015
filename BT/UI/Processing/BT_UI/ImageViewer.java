@@ -69,6 +69,7 @@ public class ImageViewer
 	private void findFiles(String rootImagePath)
 	{
 		_rootPath = rootImagePath;
+		_maxCameras = 0;
 
 		// find all the pi folders in the root path.
 		File f = new File(_rootPath);
@@ -102,6 +103,8 @@ public class ImageViewer
 			// Find all the image files in the camera folders.
 			for(File fCam : foldersCams)
 			{
+				_maxCameras++;
+
 				File[] files = fCam.listFiles(new FileFilter()
 				{
 					@Override
@@ -219,7 +222,7 @@ public class ImageViewer
 		{
 			if(_currentFrame == _btFrame)
 			{
-				if(_activeVirtualCamera >= _maxCameras)
+				if(_activeVirtualCamera >= _maxCameras-1)
 				{
 					_currentFrame++;
 				}
@@ -233,7 +236,7 @@ public class ImageViewer
 				_currentFrame++;
 			}
 
-			if(_currentFrame >= _maxFrames)
+			if(_currentFrame >= _minFrames)
 			{
 				resetCameraState();
 
