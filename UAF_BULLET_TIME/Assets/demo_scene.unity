@@ -186,6 +186,7 @@ MonoBehaviour:
   output_fps: 20
   last_image_location: 
   bullet_time_offset: 0
+  image_loading_padding: 0
   recalculateFrames: 1
   pi_list: []
 --- !u!114 &34895526

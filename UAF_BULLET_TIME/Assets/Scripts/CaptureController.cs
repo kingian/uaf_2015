@@ -53,7 +53,7 @@ public class CaptureController : MonoBehaviour {
 	private float frame_delay;
 	private float time_since_new_frame;
 
-
+	public float image_loading_padding = 0f;
 	public bool recalculateFrames = false;
 
 	public List<RPi> pi_list;
@@ -79,8 +79,8 @@ public class CaptureController : MonoBehaviour {
 		if (recalculateFrames == true) {
 
 			buildDataAbstractions ();
-			//StartCoroutine (getBulletTimeSequence (0, 0));
-			StartCoroutine(getFramesFromPiAndCamera(0,0));
+			StartCoroutine (getBulletTimeSequence (0, 0));
+			//StartCoroutine(getFramesFromPiAndCamera(0,0));
 
 			recalculateFrames = false;
 		} else {
@@ -170,7 +170,7 @@ public class CaptureController : MonoBehaviour {
 		pi_list.OrderBy(x => x.index);
 
 		//wait so www can load iamges
-		yield return new WaitForSeconds (5f);
+		yield return new WaitForSeconds (image_loading_padding);
 
 
 		List<Texture> sequence = new List<Texture> ();
@@ -252,7 +252,7 @@ public class CaptureController : MonoBehaviour {
 
 	IEnumerator allowAnimation(){
 		Debug.Log ("NOT ALLOWED");
-		yield return new WaitForSeconds (2f);
+		yield return new WaitForSeconds (.002f);
 		Debug.Log ("ALLOWED");
 		can_animate = true;
 		//CaptureTheGIF.Instance.Capture(30, 320, 240, 10f, "gifs", "gif");
