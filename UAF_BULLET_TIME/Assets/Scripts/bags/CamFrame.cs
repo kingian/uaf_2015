@@ -11,5 +11,6 @@ public class CamFrame {
 	public int timestamp;
 	public int frame_index;
 	public bool hasImage = false;
+	public string file_reference;
 
 }

@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\CaptureController.cs" />
      <Compile Include="Assets\Scripts\CreateGifTest.cs" />
+     <Compile Include="Assets\Scripts\InspectorButton.cs" />
      <Compile Include="Assets\Scripts\bags\CamFrame.cs" />
      <Compile Include="Assets\Scripts\bags\RPi.cs" />
      <Compile Include="Assets\Scripts\bags\SecondGrouping.cs" />

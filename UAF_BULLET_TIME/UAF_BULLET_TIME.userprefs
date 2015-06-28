@@ -1,16 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CaptureController.cs">
     <Files>
+      <File FileName="Assets/Scripts/CaptureController.cs" Line="290" Column="3" />
       <File FileName="Assets/Scripts/CreateGifTest.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/CaptureController.cs" Line="83" Column="6" />
-      <File FileName="Assets/Scripts/bags/RPi.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/bags/SonyCam.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/bags/RPi.cs" Line="75" Column="3" />
+      <File FileName="Assets/Scripts/bags/SonyCam.cs" Line="110" Column="4" />
       <File FileName="Assets/Scripts/bags/CamFrame.cs" Line="1" Column="1" />
       <File FileName="Assets/VENDOR/CaptureTheGIF/README.txt" Line="1" Column="1" />
       <File FileName="Assets/VENDOR/CaptureTheGIF/Scripts/CaptureTheGIF.cs" Line="1" Column="1" />
       <File FileName="Assets/VENDOR/CaptureTheGIF/Scripts/CaptureGifOnKey.cs" Line="1" Column="1" />
       <File FileName="Assets/VENDOR/CaptureTheGIF/Scripts/CaptureGifOnStart.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/InspectorButton.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
