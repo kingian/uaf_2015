@@ -99,7 +99,6 @@ GameObject:
   - 64: {fileID: 34895522}
   - 23: {fileID: 34895521}
   - 114: {fileID: 34895525}
-  - 114: {fileID: 34895526}
   m_Layer: 0
   m_Name: DrawContext
   m_TagString: Untagged
@@ -189,27 +188,6 @@ MonoBehaviour:
   image_loading_padding: 0
   recalculateFrames: 1
   pi_list: []
---- !u!114 &34895526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 34895520}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32ac1dfa11ab8ed429eabb4be01f5cbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonName: p
-  buttonType: 0
-  dir: gifs
-  name: gif
-  frames: 170
-  frameRate: 10
-  height: 240
-  aspect: 1.33333337
-  lockFramerate: 0
-  restrictDuplicateCaptures: 1
 --- !u!1 &619921606
 GameObject:
   m_ObjectHideFlags: 0

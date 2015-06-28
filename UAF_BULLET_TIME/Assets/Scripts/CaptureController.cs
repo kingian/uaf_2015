@@ -255,16 +255,24 @@ public class CaptureController : MonoBehaviour {
 		yield return new WaitForSeconds (.002f);
 		Debug.Log ("ALLOWED");
 		can_animate = true;
-		//CaptureTheGIF.Instance.Capture(30, 320, 240, 10f, "gifs", "gif");
-
+		yield return new WaitForSeconds (.1f);
+		//CaptureTheGIF.Instance.Capture(frames, (int)(aspect*height), height, frameRate, dir, name);
+		//CaptureTheGIF.Instance.cap
+		//calculate estimated playback duration
+		float duration = (float)frame_list.Count/(float)output_fps;
+		float fps = 10f;
+		int frames_to_cap = Mathf.FloorToInt (duration * fps);
+		Debug.Log ("FRAMETOCAP:" + frames_to_cap);
+		CaptureTheGIF.Instance.Capture(frame_list.Count, 320, 240, output_fps, "gifs", "gif");
 	}
 
 
-	IEnumerator stopGifCapture(){
 
-		yield return new WaitForSeconds (5f);
-
-	}
+//	IEnumerator stopGifCapture(){
+//
+//		yield return new WaitForSeconds (5f);
+//
+//	}
 
 	//we'll go ahead and create everything outselves
 
