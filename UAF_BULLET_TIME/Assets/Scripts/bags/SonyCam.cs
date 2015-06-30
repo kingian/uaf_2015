@@ -55,6 +55,22 @@ public class SonyCam {
 		}
 		return frames;
 	}
+	public List<string> getAllNormalizedFrameReferences(){
+		List<string> frames = new List<string> ();
+		foreach (SecondGrouping second in seconds_list) {
+			
+			CamFrame[] norm_frames = second.normalized_frames;
+			foreach(CamFrame frame in norm_frames)
+				frames.Add(frame.file_reference);
+			
+			
+		}
+		return frames;
+	}
+
+
+
+
 
 	public List<Texture> getNormalizedFramesInRange(int start, int end){
 
@@ -97,6 +113,11 @@ public class SonyCam {
 
 		return potential_second.normalized_frames[0].image;
 
+	}
+
+	public Texture getFrameAtSecondAndFrameIndex(int second_offset, int frame_offset){
+
+		return seconds_list [second_offset].normalized_frames [frame_offset].image;
 	}
 
 	public int getNearestTimeAtTimestampt(int timestamp){

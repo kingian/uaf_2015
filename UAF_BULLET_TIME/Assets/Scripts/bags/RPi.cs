@@ -49,6 +49,11 @@ public class RPi {
 		return all_frames;
 	}
 
+	public List<string> getFrameReferencesFromTargetCamera(int target_camera){
+		List<string> all_frames = camera_list[target_camera].getAllNormalizedFrameReferences();
+		return all_frames;
+	}
+
 
 	public List<Texture> getFramesFromTargetCameraInRange(int target_camera, int start, int end){
 
@@ -68,6 +73,21 @@ public class RPi {
 
 		}
 
+		return frames;
+	}
+
+	public List<Texture> getSingleFramePerCameraWithOffsets(int second_offset, int frame_offset){
+
+		List<Texture> frames = new List<Texture> ();
+		foreach (SonyCam cam in camera_list) {
+			
+			Texture possible_frame = cam.getFrameAtSecondAndFrameIndex(second_offset, frame_offset);
+			if(possible_frame != null){
+				frames.Add( possible_frame );
+			}
+			
+		}
+		
 		return frames;
 	}
 

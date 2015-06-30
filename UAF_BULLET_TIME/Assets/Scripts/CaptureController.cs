@@ -5,6 +5,7 @@ using System.IO;
 using System;
 using System.Linq;
 
+
 public class CaptureController : MonoBehaviour {
 
 	public string root_directory;
@@ -29,7 +30,6 @@ public class CaptureController : MonoBehaviour {
 	//public Renderer draw_context;
 
 
-	private List<Texture> frame_list;
 
 
 	private bool can_animate = false;
@@ -40,7 +40,7 @@ public class CaptureController : MonoBehaviour {
 
 	MeshRenderer mesh_renderer;
 
-	public int bullet_time_offset = 0;//in seconds from beginning;
+	public int bullet_time_frame = 0;//in frames from beginning;
 
 
 
@@ -53,42 +53,131 @@ public class CaptureController : MonoBehaviour {
 	private float frame_delay;
 	private float time_since_new_frame;
 
-
-	public bool recalculateFrames = false;
+	public float image_loading_padding = 0f;
+	[InspectorButton("OnFramesNeedProcessing")]
+	public bool setupForPreview = false;
+	[InspectorButton("OnSetNextFrameAsBulletFrame")]
+	public bool nextFrame = false;
+	[InspectorButton("OnSetPreviousFrameAsBulletFrame")]
+	public bool previousFrame = false;
+	[InspectorButton("OnPrepareForCapture")]
+	public bool prepareForCapture = false;
 
 	public List<RPi> pi_list;
+	
+	public List<string> preview_frame_list;
+	public List<Texture> frame_list;
+
+	private bool isRecording = false;
 
 	// Use this for initialization
 	void Start () {
 
+
+		init ();
+		pi_list = new List<RPi>();//clear pre calculated data
+		buildDataAbstractions ();
+		StartCoroutine (getBulletTimeSequenceRevised (0, 0));
+
+		//Debug.Log (Directory.GetCurrentDirectory ());
+		
+		
+		//loadimage ();
+		
+		//		if (recalculateFrames == true) {
+		//
+		//			buildDataAbstractions ();
+		//			StartCoroutine (getBulletTimeSequence (0, 0));
+		//			//StartCoroutine(getFramesFromPiAndCamera(0,0));
+		//
+		//			recalculateFrames = false;
+		//		} else {
+		//
+		//			StartCoroutine (getBulletTimeSequence (0, 0));
+		//		}
+	}
+
+
+	void init(){
+
 		frame_delay = 1000f / output_fps;
 		time_since_new_frame = 0f;
-
+		
 		all_safe_starts = new List<int>();
 		all_safe_ends = new List<int>();
-
+		
 		capture_path = root_directory + "/" + desired_capture_directory;
 		mesh_renderer = gameObject.GetComponent<MeshRenderer>();
 
 
+	}
+
+	private void OnFramesNeedProcessing()
+	{
+		Debug.Log("Clicked!");
+		Debug.Log (output_fps);
 		Debug.Log (Directory.GetCurrentDirectory ());
+		pi_list = new List<RPi>();
+		preview_frame_list = new List<string> ();
+		bullet_time_frame = 0;
+		init ();
+		buildDataAbstractions ();
 
 
-		//loadimage ();
+		//StartCoroutine (getPreviewFrames ());
+		getPreviewFrames ();
 
-		if (recalculateFrames == true) {
+	}
 
-			buildDataAbstractions ();
-			//StartCoroutine (getBulletTimeSequence (0, 0));
-			StartCoroutine(getFramesFromPiAndCamera(0,0));
+	void getPreviewFrames(){
 
-			recalculateFrames = false;
-		} else {
+		//yield return new WaitForSeconds(5f);
 
-			StartCoroutine (getBulletTimeSequence (0, 0));
-		}
+		//get frames for preview
+		pi_list.OrderBy(x => x.index);
+		RPi target_pi = pi_list [0];
+		preview_frame_list = target_pi.getFrameReferencesFromTargetCamera (0);
+		
+		////show it to user
+		setPreviewFrameForIndex (bullet_time_frame);
 
+	}
 
+	private void OnSetNextFrameAsBulletFrame(){
+
+		bullet_time_frame++;
+		if (bullet_time_frame >= preview_frame_list.Count)
+			bullet_time_frame = 0;
+
+		setPreviewFrameForIndex (bullet_time_frame);
+
+	}
+	
+	private void OnSetPreviousFrameAsBulletFrame(){
+		
+		bullet_time_frame--;
+		if (bullet_time_frame < 0)
+			bullet_time_frame = preview_frame_list.Count - 1;
+
+		setPreviewFrameForIndex (bullet_time_frame);
+		
+	}
+
+	private void setPreviewFrameForIndex(int index){
+		Debug.Log ("FRAMLENGHET:" + preview_frame_list.Count);
+		Debug.Log(preview_frame_list[index]);
+
+		WWW file_reference = new WWW("file://"+preview_frame_list[index]);
+
+		mesh_renderer.sharedMaterial.mainTexture = file_reference.texture;
+	}
+	
+	private void OnPrepareForCapture()
+	{
+		pi_list = new List<RPi>();
+		frame_list = new List<Texture> ();
+		preview_frame_list = new List<string> ();
+		mesh_renderer.sharedMaterial.mainTexture = null;
 	}
 
 //	void loadimage(){
@@ -103,6 +192,7 @@ public class CaptureController : MonoBehaviour {
 	void Update () {
 
 		if (can_animate==true) {
+
 
 			time_since_new_frame += (Time.deltaTime *1000f);
 			//Debug.Log(time_since_new_frame);
@@ -123,7 +213,10 @@ public class CaptureController : MonoBehaviour {
 			}
 
 
-
+			if(isRecording == false){
+				isRecording = true;
+				StartCoroutine(startRecordingGif());
+			}
 
 
 
@@ -163,6 +256,51 @@ public class CaptureController : MonoBehaviour {
 
 	}
 
+	IEnumerator getBulletTimeSequenceRevised(int pi_index, int camera_index){
+
+		//sort cameras
+		pi_list.OrderBy(x => x.index);
+		
+		//wait so www can load iamges
+		yield return new WaitForSeconds (image_loading_padding);
+		
+		
+		List<Texture> sequence = new List<Texture> ();
+
+		//get all linear time
+		RPi target_pi = pi_list [0];
+		sequence = target_pi.getFramesFromTargetCamera (camera_index);
+		//estimate second and frame for selected bullet frame
+		int second_offset = bullet_time_frame / normalizing_fps;
+		int frame_offset = bullet_time_frame % normalizing_fps;
+
+		List<Texture> bullet_time_sequence = getBulletTimeFramesForTimeAndCameraWithOffsets (0,0,second_offset,frame_offset);
+
+		sequence.InsertRange (bullet_time_frame, bullet_time_sequence);
+		
+		
+		frame_list = sequence;
+
+		
+
+		
+		
+		StartCoroutine (allowAnimation());
+
+	}
+
+	List<Texture> getBulletTimeFramesForTimeAndCameraWithOffsets(int pi_index, int camera_index, int second_offset, int frame_offset){
+
+		List<Texture> bullet_frames = new List<Texture> ();
+		
+		//we get first frame from desired camera, then loop through the rest
+		foreach (RPi pi in pi_list) {
+			List<Texture> frames = pi.getSingleFramePerCameraWithOffsets(second_offset, frame_offset);
+			bullet_frames.AddRange(frames);
+		}
+		return bullet_frames;
+
+	}
 
 	IEnumerator getBulletTimeSequence(int pi_index, int camera_index){
 
@@ -170,13 +308,13 @@ public class CaptureController : MonoBehaviour {
 		pi_list.OrderBy(x => x.index);
 
 		//wait so www can load iamges
-		yield return new WaitForSeconds (5f);
+		yield return new WaitForSeconds (image_loading_padding);
 
 
 		List<Texture> sequence = new List<Texture> ();
 
 		int first_segment_end = ((safe_end - safe_start) / 2) + safe_start;
-		first_segment_end += bullet_time_offset;
+		//first_segment_end += bullet_time_offset;
 		Debug.Log ("BULLET:" + first_segment_end);
 
 		first_segment_end = getNearestRealTimestampForPiAndCamera (0, 0, first_segment_end);
@@ -212,7 +350,7 @@ public class CaptureController : MonoBehaviour {
 
 
 		
-		yield return new WaitForSeconds (5f);
+		yield return new WaitForSeconds (image_loading_padding);
 		
 
 		RPi target_pi = pi_list [pi_index];
@@ -222,7 +360,7 @@ public class CaptureController : MonoBehaviour {
 		
 		Debug.Log (frame_list.Count);
 		
-		StartCoroutine (allowAnimation());
+		//StartCoroutine (allowAnimation());
 
 
 	}
@@ -237,7 +375,7 @@ public class CaptureController : MonoBehaviour {
 		//sort cameras
 		pi_list.OrderBy(x => x.index);
 
-		yield return new WaitForSeconds (5f);
+		yield return new WaitForSeconds (image_loading_padding);
 
 		frame_list = new List<Texture> ();
 
@@ -251,26 +389,33 @@ public class CaptureController : MonoBehaviour {
 	}
 
 	IEnumerator allowAnimation(){
-		Debug.Log ("NOT ALLOWED");
-		yield return new WaitForSeconds (2f);
-		Debug.Log ("ALLOWED");
+		yield return new WaitForSeconds (.002f);
+		Debug.Log ("Animation Allowed");
 		can_animate = true;
-		//CaptureTheGIF.Instance.Capture(30, 320, 240, 10f, "gifs", "gif");
+
+	}
+
+	IEnumerator startRecordingGif(){
+
+		yield return new WaitForSeconds (.01f);
+
+		//calculate estimated playback duration
+//		float duration = (float)frame_list.Count/(float)output_fps;
+//		float fps = 10f;
+//		int frames_to_cap = Mathf.FloorToInt (duration * fps);
+		Debug.Log ("FRAMETOCAP:" + frame_list.Count);
+		CaptureTheGIF.Instance.Capture(frame_list.Count, 320, 240, output_fps, "gifs", "gif");
 
 	}
 
 
-	IEnumerator stopGifCapture(){
-
-		yield return new WaitForSeconds (5f);
-
-	}
 
 	//we'll go ahead and create everything outselves
 
 	void buildDataAbstractions(){
-
+		Debug.Log ("HERE");
 		DirectoryInfo capture_directory = new DirectoryInfo(capture_path);
+
 		DirectoryInfo[] capture_directory_info = capture_directory.GetDirectories();
 
 		foreach (DirectoryInfo pi_folder in capture_directory_info) {
@@ -312,6 +457,7 @@ public class CaptureController : MonoBehaviour {
 						frame.frame_index = Convert.ToInt32( frame.name.Substring(frame.name.LastIndexOf("-")+1));
 						frame.timestamp = Convert.ToInt32( frame.name.Substring(0, frame.name.LastIndexOf("-")));
 						frame.hasImage = false;
+						frame.file_reference = frame_files[i].FullName;
 						//Debug.Log(frame_files[i].FullName);
 
 						//this async shit is gonna make things annoying
@@ -375,7 +521,7 @@ public class CaptureController : MonoBehaviour {
 		last_image_location = "file://"+path;
 		WWW file_reference = new WWW("file://"+path);
 		yield return file_reference;
-		//Debug.Log ("ERROR"+file_reference.url);
+		Debug.Log ("ERROR"+file_reference.error);
 		frame.image = file_reference.texture;
 		frame.hasImage = true;
 		//mesh_renderer.material.mainTexture = file_reference.texture;
